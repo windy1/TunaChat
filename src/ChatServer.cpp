@@ -10,8 +10,7 @@ using std::make_shared;
 using std::thread;
 using std::remove;
 
-/// thread function for new connections
-int handleConnection(CliConnPtr cli);
+void __signOff(ChatServer *server, const string &user);
 
 ChatServer::ChatServer(uint16_t port, int backlog, int bufferSize) :
     port(port),
@@ -33,47 +32,15 @@ int ChatServer::start() {
 
     printf("Accepting new connections...\n");
 
-
     sockaddr_in cliAddr = {};
     int addrLen = sizeof(sockaddr_in);
     int clientSocket;
-    vector<thread> threads;
     while ((clientSocket = accept(socket, (sockaddr*) &cliAddr, (socklen_t*) &addrLen))) {
         CliConnPtr conn = make_shared<CliConn>(*this, cliAddr, clientSocket);
         connections.push_back(conn);
-        threads.emplace_back(handleConnection, conn);
     }
-
-    for (auto &thread : threads) thread.join();
 
     return 0;
-}
-
-int handleConnection(CliConnPtr cli) {
-    printf("CONNECTION [%s]\n", cli->getTag().c_str());
-
-    // 1. Handshake
-    if (!cli->verify()) {
-        return cli->getStatus();
-    }
-
-    printf("VERIFIED [%s]\n", cli->getTag().c_str());
-
-    // 2. Authentication
-    bool authenticated = false;
-    while (!authenticated) {
-        authenticated = cli->authenticate();
-        if (cli->getStatus() != STATUS_OK) return cli->getStatus();
-    }
-
-    printf("AUTHENTICATED [%s]\n", cli->getTag().c_str());
-
-    // 3. Request-Response
-    while (cli->getStatus() == STATUS_OK) {
-        cli->processCommand();
-    }
-
-    return cli->getStatus();
 }
 
 UserPtr ChatServer::authenticate(const string &user, const string &pwd) {
@@ -87,11 +54,9 @@ UserPtr ChatServer::authenticate(const string &user, const string &pwd) {
 
 int ChatServer::dispatch(const string &to, const string &from, const string &text) const {
     int sent = 0;
-    for (auto &conn : connections) {
-        if (conn->getUser()->getName() == to) {
-            conn->sendMessage(from, text);
-            sent++;
-        }
+    UserPtr userTo = getUser(to);
+    if (userTo != nullptr) {
+        sent = userTo->sendMessage(from, text);
     }
 
     printf("DISPATCH\n");
@@ -103,31 +68,39 @@ int ChatServer::dispatch(const string &to, const string &from, const string &tex
     return sent;
 }
 
-void ChatServer::onConnectionClosed(CliConn *conn) {
-    UserPtr user = conn->getUser();
-
-    for (auto iter = connections.begin(); iter != connections.end(); iter++) {
-        if ((*iter).get() == conn) {
-            connections.erase(iter);
-            break;
-        }
-    }
-
-    if (user != nullptr && user->connections() == 0) {
-        userList.erase(remove(userList.begin(), userList.end(), user), userList.end());
-    }
-
-    printf("CONNECTIONS:%d\n", (int) connections.size());
-    printf("USERS:%d\n", (int) userList.size());
-}
-
 void ChatServer::signOff(const string &user) {
     printf("SIGNOFF [%s]\n", user.c_str());
-    for (auto &conn : connections) {
-        if (conn->getUser()->getName() == user) {
-            conn->kick();
+    thread(__signOff, this, user).detach();
+}
+
+void __signOff(ChatServer *server, const string &user) {
+    UserPtr usr = server->getUser(user);
+    if (usr == nullptr) return;
+
+    for (auto &conn : usr->getConnections()) {
+        conn->shutdown();
+    }
+
+    for (auto &conn : usr->getConnections()) {
+        conn->getThread().join();
+    }
+
+    server->cleanup(usr);
+}
+
+int ChatServer::cleanup(UserPtr user) {
+    int removed = 0;
+    for (auto iter = connections.begin(); iter != connections.end();) {
+        UserPtr usr = (*iter)->getUser();
+        if (usr != nullptr && usr == user) {
+            iter = connections.erase(iter);
+            removed++;
+        } else {
+            iter++;
         }
     }
+    userList.erase(remove(userList.begin(), userList.end(), user), userList.end());
+    return removed;
 }
 
 const sockaddr_in& ChatServer::getAddress() const {

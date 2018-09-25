@@ -68,9 +68,9 @@ public:
      */
     int dispatch(const string &to, const string &from, const string &text) const;
 
-    void onConnectionClosed(CliConn *conn);
-
     void signOff(const string &user);
+
+    int cleanup(UserPtr user);
 
     const sockaddr_in& getAddress() const;
 

@@ -11,11 +11,14 @@ using std::stringstream;
 const string CliConn::NAME_UNKNOWN = "UNKNOWN";
 int CliConn::LAST_ID = 0;
 
+int handleConnection(CliConn *cli);
+
 CliConn::CliConn(ChatServer &server, sockaddr_in address, int socket) :
     server(server),
     address(address),
     socket(socket),
-    id(LAST_ID++) {}
+    id(LAST_ID++),
+    th(thread(handleConnection, this)) {}
 
 bool CliConn::verify() {
     if (strcmp(readLine()->c_str(), PROTO_HELLO) == 0) {
@@ -66,7 +69,6 @@ void CliConn::processCommand() {
     const string* cmd = readLine();
 
     if (status == STATUS_SHUTDOWN) {
-        close("GOODBYE", STATUS_CLOSED);
         return;
     }
 
@@ -74,7 +76,6 @@ void CliConn::processCommand() {
         writeUserList();
     } else if (strcmp(cmd->c_str(), PROTO_BYE) == 0) {
         server.signOff(user->getName());
-        close("INITIATED_SIGNOFF", STATUS_CLOSED);
     } else {
         unsigned long sep1 = cmd->find(':');
         unsigned long sep2 = cmd->rfind(':');
@@ -106,8 +107,8 @@ void CliConn::sendMessage(const string &from, const string &text) {
     write(socket, "\n", 1);
 }
 
-void CliConn::kick() {
-    printf("KICK [%s]\n", getTag().c_str());
+void CliConn::shutdown() {
+    printf("SHUTDOWN [%s]\n", getTag().c_str());
     write(socket, PROTO_SIGNOFF, strlen(PROTO_SIGNOFF));
     write(socket, ":", 1);
     write(socket, user->getName().c_str(), user->getName().size());
@@ -115,7 +116,7 @@ void CliConn::kick() {
     status = STATUS_SHUTDOWN;
     // shutdown() disables further operations on the socket while still keeping the socket descriptor so that if recv()
     // is blocking, the connection can be closed gracefully from another thread
-    shutdown(socket, SHUT_RDWR);
+    ::shutdown(socket, SHUT_RDWR);
 }
 
 ChatServer& CliConn::getServer() const {
@@ -163,6 +164,10 @@ int CliConn::getStatus() const {
     return status;
 }
 
+thread& CliConn::getThread() {
+    return th;
+}
+
 const string* CliConn::readLine() {
     int bufferSize = server.getBufferSize();
     char buffer[bufferSize];
@@ -196,6 +201,36 @@ void* CliConn::close(string msg, int status) {
     fprintf(stderr, "%s [%s] (code: %d)\n", msg.c_str(), getTag().c_str(), status);
     ::close(socket);
     this->status = status;
-    server.onConnectionClosed(this);
     return nullptr;
+}
+
+int handleConnection(CliConn *cli) {
+    printf("CONNECTION [%s]\n", cli->getTag().c_str());
+
+    // 1. Handshake
+    if (!cli->verify()) {
+        return cli->getStatus();
+    }
+
+    printf("VERIFIED [%s]\n", cli->getTag().c_str());
+
+    // 2. Authentication
+    bool authenticated = false;
+    while (!authenticated) {
+        authenticated = cli->authenticate();
+        if (cli->getStatus() != STATUS_OK) return cli->getStatus();
+    }
+
+    printf("AUTHENTICATED [%s]\n", cli->getTag().c_str());
+
+    // 3. Request-Response
+    while (cli->getStatus() == STATUS_OK) {
+        cli->processCommand();
+    }
+
+    if (cli->getStatus() == STATUS_SHUTDOWN) {
+        cli->close("GOODBYE", STATUS_CLOSED);
+    }
+
+    return cli->getStatus();
 }

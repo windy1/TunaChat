@@ -14,16 +14,21 @@ class User {
 
     ChatServer &server;
     string name;
+    mutable vector<CliConnPtr> connections;
 
 public:
 
     explicit User(ChatServer &server, const string &name);
 
+    int sendMessage(const string &from, const string &text);
+
     ChatServer& getServer() const;
 
     const string& getName() const;
 
-    int connections() const;
+    int numConnections() const;
+
+    const vector<CliConnPtr>& getConnections() const;
 
 };
 

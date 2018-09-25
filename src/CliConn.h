@@ -9,6 +9,7 @@
 #include <memory>
 
 using std::string;
+using std::thread;
 
 class CliConn {
 
@@ -28,14 +29,13 @@ class CliConn {
     int status = STATUS_OK;
     int id;
 
+    thread th;
+
     /**
      * Reads the next line from the client. This is a blocking operation; execution will not proceed until new data is
      * received or the connection is closed.
      */
     const string* readLine();
-
-    /// forcibly closes the connection with the specified error
-    void* close(string msg, int status);
 
     /// writes the server's user list to the client
     void writeUserList();
@@ -72,8 +72,10 @@ public:
      */
     void sendMessage(const string &from, const string &text);
 
-    /// kicks this connection from the server
-    void kick();
+    void shutdown();
+
+    /// forcibly closes the connection with the specified error
+    void* close(string msg, int status);
 
     /// returns the parent server
     ChatServer& getServer() const;
@@ -97,6 +99,8 @@ public:
 
     /// returns the current status code of the connection
     int getStatus() const;
+
+    thread& getThread();
 
 };
 
