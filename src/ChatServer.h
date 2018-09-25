@@ -6,7 +6,6 @@
 #define TUNACHAT_CHATSERVER_H
 
 #include "tuna.h"
-#include "User.h"
 #include <cstdint>
 #include <sys/socket.h>
 #include <iostream>
@@ -20,19 +19,26 @@
 using std::vector;
 using std::string;
 
-typedef std::shared_ptr<User> UserPtr;
-
+class User;
 class CliConn;
+
+typedef std::shared_ptr<User> UserPtr;
+typedef std::shared_ptr<CliConn> CliConnPtr;
 
 class ChatServer {
 
     static uint16_t const DEFAULT_PORT = 12000;
 
+    sockaddr_in address = {};
     uint16_t port;
+    int socket;
     int backlog;
     int bufferSize;
     vector<UserPtr> userList;
-    vector<CliConn*> connections;
+    vector<CliConnPtr> connections;
+    int status;
+
+    int init();
 
 public:
 
@@ -44,15 +50,13 @@ public:
     int start();
 
     /**
-     * Authenticates the specified connection for the specified username and password. Creates a new User if not already
-     * online and adds the connection to the connection list.
+     * Authenticates the specified username and password. Creates a new User if not already online.
      *
-     * @param conn incoming connection
      * @param user user that is authenticating
      * @param pwd user password
      * @return the resulting User
      */
-    UserPtr authenticate(CliConn &conn, const string &user, const string &pwd);
+    UserPtr authenticate(const string &user, const string &pwd);
 
     /**
      * Sends a message to each of the open connections for the specified User.
@@ -60,14 +64,20 @@ public:
      * @param to the User the message is for
      * @param from the User who sent the message
      * @param text the text of the message
-     * @return true if the message was sent
+     * @return the amount of connections the message was sent to
      */
-    bool dispatch(const string &to, const string &from, const string &text) const;
+    int dispatch(const string &to, const string &from, const string &text) const;
+
+    void onConnectionClosed(CliConn *conn);
 
     void signOff(const string &user);
 
+    const sockaddr_in& getAddress() const;
+
     /// returns the port this server is running on
     int getPort() const;
+
+    int getSocket() const;
 
     /// returns the maximum amount of queued connections allowed
     int getBacklog() const;
@@ -82,7 +92,9 @@ public:
     UserPtr getUser(const string &name) const;
 
     /// returns current connections
-    const vector<CliConn*>& getConnections() const;
+    const vector<CliConnPtr>& getConnections() const;
+
+    int getStatus() const;
 
 };
 

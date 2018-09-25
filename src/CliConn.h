@@ -12,35 +12,64 @@ using std::string;
 
 class CliConn {
 
-    int socket;
-    ChatServer &server;
-    string lastMessage;
-    int error = ERR_NONE;
-    UserPtr user;
+    static const string NAME_UNKNOWN;
+    static int LAST_ID;
 
-    /// reads the next line from the client
+    ChatServer &server;
+    UserPtr user;
+    mutable string username;
+
+    sockaddr_in address;
+    mutable string addrStr;
+    mutable string tag;
+
+    int socket;
+    string lastMessage;
+    int status = STATUS_OK;
+    int id;
+
+    /**
+     * Reads the next line from the client. This is a blocking operation; execution will not proceed until new data is
+     * received or the connection is closed.
+     */
     const string* readLine();
 
     /// forcibly closes the connection with the specified error
-    void* close(string msg, int err);
+    void* close(string msg, int status);
 
     /// writes the server's user list to the client
     void writeUserList();
 
 public:
 
-    CliConn(ChatServer &server, int socket);
+    CliConn(ChatServer &server, sockaddr_in address, int socket);
 
-    /// initiates the handshake protocol for the connection
+    /**
+     * Initiates the handshake protocol for the connection by sending a message and awaits the proper reply.
+     *
+     * @return true if successful, false if the connection has been closed
+     */
     bool verify();
 
-    /// attempts to authenticate the client with the server
+    /**
+     * Authenticates the connection with the server and assigns this connection's User if successful. An unsuccessful
+     * authentication attempt will not close the connection.
+     *
+     * @return true if successful
+     */
     bool authenticate();
 
-    /// processes an authenticated connection
+    /**
+     * Processes the next message as a command.
+     */
     void processCommand();
 
-    /// sends a message to the client from the specified User
+    /**
+     * Sends a message to the client from the specified User.
+     *
+     * @param from the user the message is from
+     * @param text the text of the message
+     */
     void sendMessage(const string &from, const string &text);
 
     /// kicks this connection from the server
@@ -52,14 +81,22 @@ public:
     /// returns the User associated with this connection
     UserPtr getUser() const;
 
+    const string& getUsername() const;
+
+    const sockaddr_in& getAddress() const;
+
+    const string& getAddressString() const;
+
+    const string& getTag() const;
+
     /// returns the client socket
     int getSocket() const;
 
     /// returns the last message received on this connection
     const string* getLastMessage() const;
 
-    /// returns the current error code of the connection
-    int getError() const;
+    /// returns the current status code of the connection
+    int getStatus() const;
 
 };
 
