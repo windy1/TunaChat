@@ -18,26 +18,28 @@ class CliConn {
 
     ChatServer &server;
     UserPtr user;
-    mutable string username;
 
-    sockaddr_in address;
+    mutable string username;
     mutable string addrStr;
     mutable string tag;
 
+    sockaddr_in address;
     int socket;
-    string lastMessage;
     int status = STATUS_OK;
+    string lastMessage;
     int id;
 
     thread th;
 
     /**
      * Reads the next line from the client. This is a blocking operation; execution will not proceed until new data is
-     * received or the connection is closed.
+     * received or the connection is has been shutdown.
      */
     const string* readLine();
 
-    /// writes the server's user list to the client
+    /**
+     * Writes the server's user list to the client.
+     */
     void writeUserList();
 
 public:
@@ -45,7 +47,8 @@ public:
     CliConn(ChatServer &server, sockaddr_in address, int socket);
 
     /**
-     * Initiates the handshake protocol for the connection by sending a message and awaits the proper reply.
+     * Initiates the handshake protocol for the connection by reading an expected "HELLO" from the client and sends one
+     * in return. If the client does not send the correct message, it will be closed immediately.
      *
      * @return true if successful, false if the connection has been closed
      */
@@ -53,7 +56,7 @@ public:
 
     /**
      * Authenticates the connection with the server and assigns this connection's User if successful. An unsuccessful
-     * authentication attempt will not close the connection.
+     * authentication attempt will not close the connection; however, an improperly formatted request will.
      *
      * @return true if successful
      */
@@ -72,34 +75,86 @@ public:
      */
     void sendMessage(const string &from, const string &text);
 
+    /**
+     * Signals to the client that they are being signed-off and shuts down the socket. This method sets the connections
+     * status to STATUS_SHUTDOWN so that once recv() is no longer blocking in processCommand(), the connection knows not
+     * to process any more data or listen on the socket any longer.
+     *
+     * This method may be called asynchronously. This method does not handle releasing resources after the connection
+     * has been shutdown.
+     */
     void shutdown();
 
-    /// forcibly closes the connection with the specified error
-    void* close(string msg, int status);
+    /**
+     * Forcibly closes the connection with the specified message and status code.
+     *
+     * @param msg status message
+     * @param status code
+     * @return nullptr
+     */
+    void* close(const string &msg, int status);
 
-    /// returns the parent server
+    /**
+     * Returns the server associated with this connection.
+     *
+     * @return server instance
+     */
     ChatServer& getServer() const;
 
-    /// returns the User associated with this connection
+    /**
+     * Returns the User associated with this connection, if any.
+     *
+     * @return user associated with connection if this connection has been authenticated, nullptr otherwise
+     */
     UserPtr getUser() const;
 
-    const string& getUsername() const;
-
-    const sockaddr_in& getAddress() const;
-
-    const string& getAddressString() const;
-
+    /**
+     * Returns a string identifier for this connection.
+     *
+     * @return string identifier
+     */
     const string& getTag() const;
 
-    /// returns the client socket
+    /**
+     * Returns a unique identifier for this connection.
+     *
+     * @return unique id
+     */
+    int getId() const;
+
+    /**
+     * Returns the address of this connection.
+     *
+     * @return address of connection
+     */
+    const sockaddr_in& getAddress() const;
+
+    /**
+     * Returns the client socket.
+     *
+     * @return client socket
+     */
     int getSocket() const;
 
-    /// returns the last message received on this connection
+    /**
+     * Returns the last message received on this connection.
+     *
+     * @return last message received
+     */
     const string* getLastMessage() const;
 
-    /// returns the current status code of the connection
+    /**
+     * Returns the current status code of the connection.
+     *
+     * @return status code
+     */
     int getStatus() const;
 
+    /**
+     * Returns the thread instance that the connection is being handled in.
+     *
+     * @return connection thread
+     */
     thread& getThread();
 
 };

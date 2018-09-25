@@ -10,7 +10,17 @@ using std::make_shared;
 using std::thread;
 using std::remove;
 
+/**
+ * Thread function for detached sign-off threads.
+ *
+ * @param server instance
+ * @param user being signed off
+ */
 void __signOff(ChatServer *server, const string &user);
+
+///
+/// == ChatServer ==
+///
 
 ChatServer::ChatServer(uint16_t port, int backlog, int bufferSize) :
     port(port),
@@ -18,6 +28,10 @@ ChatServer::ChatServer(uint16_t port, int backlog, int bufferSize) :
     bufferSize(bufferSize) {}
 
 ChatServer::ChatServer() : ChatServer(DEFAULT_PORT) {}
+
+///
+/// == Methods ==
+///
 
 int ChatServer::start() {
     printf("Starting server...\n");
@@ -40,10 +54,11 @@ int ChatServer::start() {
         connections.push_back(conn);
     }
 
-    return 0;
+    return STATUS_OK;
 }
 
 UserPtr ChatServer::authenticate(const string &user, const string &pwd) {
+    // TODO: actually verify user and pwd
     UserPtr usr = getUser(user);
     if (usr == nullptr) {
         usr = make_shared<User>(*this, user);
@@ -103,6 +118,25 @@ int ChatServer::cleanup(UserPtr user) {
     return removed;
 }
 
+///
+/// == Getters ==
+///
+
+const vector<UserPtr>& ChatServer::getUserList() const {
+    return userList;
+}
+
+UserPtr ChatServer::getUser(const string &name) const {
+    for (auto &user : userList) {
+        if (user->getName() == name) return user;
+    }
+    return nullptr;
+}
+
+const vector<CliConnPtr>& ChatServer::getConnections() const {
+    return connections;
+}
+
 const sockaddr_in& ChatServer::getAddress() const {
     return address;
 }
@@ -123,24 +157,13 @@ int ChatServer::getBufferSize() const {
     return bufferSize;
 }
 
-const vector<UserPtr>& ChatServer::getUserList() const {
-    return userList;
-}
-
-UserPtr ChatServer::getUser(const string &name) const {
-    for (auto &user : userList) {
-        if (user->getName() == name) return user;
-    }
-    return nullptr;
-}
-
-const vector<CliConnPtr>& ChatServer::getConnections() const {
-    return connections;
-}
-
 int ChatServer::getStatus() const {
     return status;
 }
+
+///
+/// == Private methods ==
+///
 
 int ChatServer::init() {
     address.sin_family = AF_INET;

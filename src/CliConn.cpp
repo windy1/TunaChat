@@ -8,10 +8,25 @@
 
 using std::stringstream;
 
+/**
+ * Thread function for handling new incoming connections. Encapsulates the entire lifetime of a CliConn and enforces
+ * protocol.
+ *
+ * @param cli client connection
+ * @return status code
+ */
+int handleConnection(CliConn *cli);
+
+///
+/// == Statics ==
+///
+
 const string CliConn::NAME_UNKNOWN = "UNKNOWN";
 int CliConn::LAST_ID = 0;
 
-int handleConnection(CliConn *cli);
+///
+/// == CliConn ==
+///
 
 CliConn::CliConn(ChatServer &server, sockaddr_in address, int socket) :
     server(server),
@@ -19,6 +34,10 @@ CliConn::CliConn(ChatServer &server, sockaddr_in address, int socket) :
     socket(socket),
     id(LAST_ID++),
     th(thread(handleConnection, this)) {}
+
+///
+/// == Methods ==
+///
 
 bool CliConn::verify() {
     if (strcmp(readLine()->c_str(), PROTO_HELLO) == 0) {
@@ -119,6 +138,17 @@ void CliConn::shutdown() {
     ::shutdown(socket, SHUT_RDWR);
 }
 
+void* CliConn::close(const string &msg, int status) {
+    fprintf(stderr, "%s [%s] (code: %d)\n", msg.c_str(), getTag().c_str(), status);
+    ::close(socket);
+    this->status = status;
+    return nullptr;
+}
+
+///
+/// == Getters ==
+///
+
 ChatServer& CliConn::getServer() const {
     return server;
 }
@@ -127,29 +157,18 @@ UserPtr CliConn::getUser() const {
     return user;
 }
 
-const string& CliConn::getUsername() const {
-    if (user == nullptr) {
-        return NAME_UNKNOWN;
-    } else if (username.empty()) {
-        return username = user->getName();
-    } else {
-        return username;
-    }
+const string& CliConn::getTag() const {
+    string name = NAME_UNKNOWN;
+    string addr = inet_ntoa(address.sin_addr);
+    return tag = name + '@' + addr;
+}
+
+int CliConn::getId() const {
+    return id;
 }
 
 const sockaddr_in& CliConn::getAddress() const {
     return address;
-}
-
-const string& CliConn::getAddressString() const {
-    if (addrStr.empty()) {
-        addrStr = inet_ntoa(address.sin_addr);
-    }
-    return addrStr;
-}
-
-const string& CliConn::getTag() const {
-    return tag = getUsername() + '@' + getAddressString();
 }
 
 int CliConn::getSocket() const {
@@ -168,12 +187,17 @@ thread& CliConn::getThread() {
     return th;
 }
 
+///
+/// == Private methods ==
+///
+
 const string* CliConn::readLine() {
     int bufferSize = server.getBufferSize();
     char buffer[bufferSize];
     ssize_t readSize = recv(socket, buffer, (size_t) bufferSize, 0);
 
     if (status == STATUS_SHUTDOWN) {
+        // check for shutdown signal that may have been set async while waiting for recv
         return nullptr;
     }
 
@@ -197,12 +221,9 @@ void CliConn::writeUserList() {
     write(socket, "\n", 1);
 }
 
-void* CliConn::close(string msg, int status) {
-    fprintf(stderr, "%s [%s] (code: %d)\n", msg.c_str(), getTag().c_str(), status);
-    ::close(socket);
-    this->status = status;
-    return nullptr;
-}
+///
+/// == Main method for new connections ==
+///
 
 int handleConnection(CliConn *cli) {
     printf("CONNECTION [%s]\n", cli->getTag().c_str());

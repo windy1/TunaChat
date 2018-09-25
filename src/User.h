@@ -18,17 +18,37 @@ class User {
 
 public:
 
-    explicit User(ChatServer &server, const string &name);
+    User(ChatServer &server, const string &name);
 
+    /**
+     * Attempts to send a message of the specified text from the specified username.
+     *
+     * @param from User that sent the message
+     * @param text of message
+     * @return the amount of connections the message was sent to
+     */
     int sendMessage(const string &from, const string &text);
 
+    /**
+     * Returns all connections associated with this User.
+     *
+     * @return connections associated with user
+     */
+    const vector<CliConnPtr>& getConnections() const;
+
+    /**
+     * Returns the server associated with this User.
+     *
+     * @return server instance
+     */
     ChatServer& getServer() const;
 
+    /**
+     * Returns this User's name.
+     *
+     * @return user name
+     */
     const string& getName() const;
-
-    int numConnections() const;
-
-    const vector<CliConnPtr>& getConnections() const;
 
 };
 

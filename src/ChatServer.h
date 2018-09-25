@@ -38,6 +38,11 @@ class ChatServer {
     vector<CliConnPtr> connections;
     int status;
 
+    /**
+     * Initializes the socket and starts listening on a new socket.
+     *
+     * @return status code
+     */
     int init();
 
 public:
@@ -46,7 +51,11 @@ public:
 
     ChatServer();
 
-    /// starts the server and begins listening for incoming connections
+    /**
+     * Starts the server. Initializes and starts listening on a new socket for new connections.
+     *
+     * @return status code
+     */
     int start();
 
     /**
@@ -68,32 +77,84 @@ public:
      */
     int dispatch(const string &to, const string &from, const string &text) const;
 
+    /**
+     * Spawns a detached thread to handle the disconnection and cleanup of all existing connections for the specified
+     * user.
+     *
+     * @param user to sign off
+     */
     void signOff(const string &user);
 
+    /**
+     * Removes all connection instances attached to this User and removed the User from the user list.
+     *
+     * @param user to remove
+     * @return amount of connections removed
+     */
     int cleanup(UserPtr user);
 
-    const sockaddr_in& getAddress() const;
-
-    /// returns the port this server is running on
-    int getPort() const;
-
-    int getSocket() const;
-
-    /// returns the maximum amount of queued connections allowed
-    int getBacklog() const;
-
-    /// returns the buffer size for incoming messages from clients
-    int getBufferSize() const;
-
-    /// returns currently online users
+    /**
+     * Returns all currently online users.
+     *
+     * @return users currently online
+     */
     const vector<UserPtr>& getUserList() const;
 
-    /// returns the user if currently online
+    /**
+     * Returns the user if currently online.
+     *
+     * @param name of user
+     * @return User if online, nullptr otherwise
+     */
     UserPtr getUser(const string &name) const;
 
-    /// returns current connections
+    /**
+     * Returns all current connections.
+     *
+     * @return current connections
+     */
     const vector<CliConnPtr>& getConnections() const;
 
+    /**
+     * Returns the address this server is running on.
+     *
+     * @return server address
+     */
+    const sockaddr_in& getAddress() const;
+
+    /**
+     * Returns the port number this server is running on.
+     *
+     * @return port number
+     */
+    int getPort() const;
+
+    /**
+     * Returns the socket that this server is listening on.
+     *
+     * @return socket number
+     */
+    int getSocket() const;
+
+    /**
+     * Returns the maximum amount of queued connections permitted.
+     *
+     * @return queued connections allowed
+     */
+    int getBacklog() const;
+
+    /**
+     * Returns the buffer size for incoming messages from clients
+     *
+     * @return data buffer size
+     */
+    int getBufferSize() const;
+
+    /**
+     * Returns the current status code of the server.
+     *
+     * @return status code
+     */
     int getStatus() const;
 
 };

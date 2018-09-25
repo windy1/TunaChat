@@ -7,7 +7,6 @@
 
 #define STATUS_OK           200
 #define STATUS_SHUTDOWN     201
-#define STATUS_SIGNOFF      202
 #define STATUS_CLOSED       202
 #define STATUS_BAD_SOCKET   500
 #define STATUS_BAD_BIND     501
