@@ -27,7 +27,7 @@ class ChatServer {
     uint16_t port;
     int backlog;
     int bufferSize;
-    std::vector<User> userList;
+    std::vector<User*> userList;
     std::vector<ClientConnection*> connections;
 
 public:
@@ -35,6 +35,8 @@ public:
     explicit ChatServer(uint16_t port, int backlog=10, int bufferSize=1024);
 
     ChatServer();
+
+    ~ChatServer();
 
     int start();
 
@@ -44,7 +46,7 @@ public:
 
     int getBufferSize() const;
 
-    const std::vector<User>& getUserList() const;
+    const std::vector<User*>& getUserList() const;
 
     User* authenticate(ClientConnection &conn, const std::string &user, const std::string &pwd);
 

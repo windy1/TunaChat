@@ -131,9 +131,9 @@ void ClientConnection::sendMessage(const std::string &from, const std::string &t
 }
 
 void ClientConnection::writeUserList() {
-    const std::vector<User> &userList = server.getUserList();
+    const std::vector<User*> &userList = server.getUserList();
     for (int i = 0; i < userList.size(); i++) {
-        const std::string &name = userList[i].getName();
+        const std::string &name = userList[i]->getName();
         write(socket, name.c_str(), name.size());
         if (i < userList.size() - 1) write(socket, ",", 1);
     }

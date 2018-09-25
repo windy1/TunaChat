@@ -13,6 +13,12 @@ ChatServer::ChatServer(uint16_t port, int backlog, int bufferSize) :
 
 ChatServer::ChatServer() : ChatServer(DEFAULT_PORT) {}
 
+ChatServer::~ChatServer() {
+    for (auto &user : userList) {
+        delete user;
+    }
+}
+
 int ChatServer::getPort() const {
     return port;
 }
@@ -25,7 +31,7 @@ int ChatServer::getBufferSize() const {
     return bufferSize;
 }
 
-const std::vector<User>& ChatServer::getUserList() const {
+const std::vector<User*>& ChatServer::getUserList() const {
     return userList;
 }
 
@@ -33,16 +39,18 @@ User* ChatServer::authenticate(ClientConnection &conn, const std::string &user, 
     connections.push_back(&conn);
     printf("connections.size() = %d\n", (int) connections.size());
     for (auto &userObj : userList) {
-        if (userObj.getName() == user) {
-            return &userObj;
+        if (userObj->getName() == user) {
+            return userObj;
         }
     }
-    return &userList.emplace_back(user);
+    User *u = new User(user);
+    userList.push_back(u);
+    return u;
 }
 
 void ChatServer::signOff(const std::string &user) {
     for (auto i = userList.begin(); i != userList.end(); i++) {
-        if (i->getName() == user) {
+        if ((*i)->getName() == user) {
             userList.erase(i);
             return;
         }
