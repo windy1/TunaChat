@@ -4,8 +4,8 @@
 
 #include "User.h"
 
-User::User(const std::string &name) : name(name) {}
+User::User(const string &name) : name(name) {}
 
-const std::string& User::getName() const {
+const string& User::getName() const {
     return name;
 }

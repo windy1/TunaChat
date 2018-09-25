@@ -2,9 +2,14 @@
 // Created by Walker Crouse on 9/24/18.
 //
 
-#include "ClientConnection.h"
+#include "CliConn.h"
+#include <memory>
 
-int handleConnection(ClientConnection cli);
+using std::make_unique;
+using std::thread;
+
+/// thread function for new connections
+int handleConnection(CliConn cli);
 
 ChatServer::ChatServer(uint16_t port, int backlog, int bufferSize) :
     port(port),
@@ -12,61 +17,6 @@ ChatServer::ChatServer(uint16_t port, int backlog, int bufferSize) :
     bufferSize(bufferSize) {}
 
 ChatServer::ChatServer() : ChatServer(DEFAULT_PORT) {}
-
-ChatServer::~ChatServer() {
-    for (auto &user : userList) {
-        delete user;
-    }
-}
-
-int ChatServer::getPort() const {
-    return port;
-}
-
-int ChatServer::getBacklog() const {
-    return backlog;
-}
-
-int ChatServer::getBufferSize() const {
-    return bufferSize;
-}
-
-const std::vector<User*>& ChatServer::getUserList() const {
-    return userList;
-}
-
-User* ChatServer::authenticate(ClientConnection &conn, const std::string &user, const std::string &pwd) {
-    connections.push_back(&conn);
-    printf("connections.size() = %d\n", (int) connections.size());
-    for (auto &userObj : userList) {
-        if (userObj->getName() == user) {
-            return userObj;
-        }
-    }
-    User *u = new User(user);
-    userList.push_back(u);
-    return u;
-}
-
-void ChatServer::signOff(const std::string &user) {
-    for (auto i = userList.begin(); i != userList.end(); i++) {
-        if ((*i)->getName() == user) {
-            userList.erase(i);
-            return;
-        }
-    }
-}
-
-bool ChatServer::dispatch(const std::string &to, const std::string &from, const std::string &text) const {
-    bool sent = false;
-    for (auto &conn : connections) {
-        if (conn->getUser()->getName() == to) {
-            conn->sendMessage(from, text);
-            sent = true;
-        }
-    }
-    return sent;
-}
 
 int ChatServer::start() {
     int socketHandle = socket(AF_INET, SOCK_STREAM, 0);
@@ -94,9 +44,9 @@ int ChatServer::start() {
 
     int addrLen = sizeof(address);
     int clientSocket;
-    std::vector<std::thread> threads;
+    vector<thread> threads;
     while ((clientSocket = accept(socketHandle, (sockaddr*) &address, (socklen_t*) &addrLen))) {
-        threads.emplace_back(handleConnection, ClientConnection(*this, clientSocket));
+        threads.emplace_back(handleConnection, CliConn(*this, clientSocket));
     }
 
     for (auto &thread : threads) thread.join();
@@ -104,16 +54,75 @@ int ChatServer::start() {
     return 0;
 }
 
-int handleConnection(ClientConnection cli) {
-    if (!cli.verify()) return cli.getError();
+int handleConnection(CliConn cli) {
+    // 1. Handshake
+    if (!cli.verify()) {
+        return cli.getError();
+    }
 
+    // 2. Authentication
     bool authenticated = false;
     while (!authenticated) {
         authenticated = cli.authenticate();
         if (cli.getError() != ERR_NONE) return cli.getError();
     }
 
-    while (cli.getError() == ERR_NONE) cli.processCommand();
+    // 3. Request-Response
+    while (cli.getError() == ERR_NONE) {
+        cli.processCommand();
+    }
 
     return cli.getError();
+}
+
+UserPtr ChatServer::authenticate(CliConn &conn, const string &user, const string &pwd) {
+    connections.push_back(&conn);
+    UserPtr usr = getUser(user);
+    if (usr == nullptr) {
+        usr = make_unique<User>(user);
+        userList.push_back(usr);
+    }
+    return usr;
+}
+
+bool ChatServer::dispatch(const string &to, const string &from, const string &text) const {
+    bool sent = false;
+    for (auto &conn : connections) {
+        if (conn->getUser()->getName() == to) {
+            conn->sendMessage(from, text);
+            sent = true;
+        }
+    }
+    return sent;
+}
+
+void ChatServer::signOff(const string &user) {
+    // TODO
+}
+
+int ChatServer::getPort() const {
+    return port;
+}
+
+int ChatServer::getBacklog() const {
+    return backlog;
+}
+
+int ChatServer::getBufferSize() const {
+    return bufferSize;
+}
+
+const vector<UserPtr>& ChatServer::getUserList() const {
+    return userList;
+}
+
+UserPtr ChatServer::getUser(const string &name) const {
+    for (auto &user : userList) {
+        if (user->getName() == name) return user;
+    }
+    return nullptr;
+}
+
+const vector<CliConn*>& ChatServer::getConnections() const {
+    return connections;
 }
