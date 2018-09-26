@@ -3,8 +3,7 @@
 //
 
 #include "ServerConn.h"
-#include "Terminal/StatusWindow.h"
-#include "Terminal/InputWindow.h"
+#include "Terminal/windows.h"
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -13,11 +12,19 @@
 
 using std::stringstream;
 
+///
+/// == ServerConn ==
+///
+
 ServerConn::ServerConn(ChatClient &client, const string &host, int port, int bufferSize) :
     client(client), host(host), port(port), bufferSize(bufferSize) {
     status = init();
     status = sayHello();
 }
+
+///
+/// == Methods ==
+///
 
 int ServerConn::authenticate(const string &user, const string &pwd) {
     char authStr[1024];
@@ -41,15 +48,23 @@ int ServerConn::authenticate(const string &user, const string &pwd) {
     }
 }
 
-int ServerConn::sendMessage(const string &user, const string &msg) {
+int ServerConn::sendMessage(const string &user, const string &text) {
     char req[1024];
-    sprintf(req, "%s:%s:%s", PROTO_TO, user.c_str(), msg.c_str());
+    sprintf(req, "%s:%s:%s", PROTO_TO, user.c_str(), text.c_str());
     send(socket, req, strlen(req), 0);
     return STATUS_OK;
 }
 
+///
+/// == Getters ==
+///
+
 ChatClient& ServerConn::getClient() const {
     return client;
+}
+
+bool ServerConn::isAuthenticated() const {
+    return authenticated;
 }
 
 const string& ServerConn::getHost() const {
@@ -68,13 +83,13 @@ int ServerConn::getBufferSize() const {
     return bufferSize;
 }
 
-bool ServerConn::isAuthenticated() const {
-    return authenticated;
-}
-
 int ServerConn::getStatus() const {
     return status;
 }
+
+///
+/// == Private methods ==
+///
 
 int ServerConn::init() {
     Terminal &term = client.getTerminal();

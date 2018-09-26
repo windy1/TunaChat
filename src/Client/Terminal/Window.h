@@ -31,29 +31,70 @@ public:
 
     virtual ~Window();
 
+    /**
+     * Draws a horizontal divider across the window using the specified string, starting at the specified coordinates
+     * using the specified color pair.
+     *
+     * @param ch divider character
+     * @param y start coordinate
+     * @param x start coordinate
+     * @param colorPair registered color pair
+     */
     void drawDivider(const string &ch, int y = 0, int x = 0, int colorPair = COLOR_PAIR_DIVIDER);
 
-    void addStr(int y, int x, const string &str);
-
-    void getStr(string &str);
-
-    void print(const string &str);
-
+    /**
+     * Toggles on the color attribute for the specified color pair.
+     *
+     * @param colorPair color pair to enable
+     */
     void colorOn(int colorPair);
 
+    /**
+     * Toggles off the color attribute for the specified color pair.
+     *
+     * @param colorPair color pair to enable
+     */
     void colorOff(int colorPair);
 
-    void refresh();
-
-    void clear();
-
+    /**
+     * Returns the amount of rows in the window.
+     *
+     * @return rows in window
+     */
     int getRows() const;
 
+    /**
+     * Returns the amount of columns in the window.
+     *
+     * @return columns in window
+     */
     int getColumns() const;
 
+    /**
+     * Returns this Window's x-coordinate on the screen, which is mapped to the upper-left most corner.
+     *
+     * @return x coordinate
+     */
     int getX() const;
 
+    /**
+     * Returns this Window's y-coordinate on the screen, which is mapped to the upper-left most corner.
+     *
+     * @return y coordinate
+     */
     int getY() const;
+
+    ///
+    /// == Wrapper methods ==
+    /// The following methods are wrappers for coresponding ncurses functions.
+    ///
+
+    void addStr(int y, int x, const string &str);
+    void getStr(string &str);
+    void refresh();
+    void clear();
+
+    /// ======================
 
 };
 

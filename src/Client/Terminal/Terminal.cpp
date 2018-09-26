@@ -3,12 +3,14 @@
 //
 
 #include "Terminal.h"
-#include "InputWindow.h"
-#include "StatusWindow.h"
-#include "MainWindow.h"
+#include "windows.h"
 #include <locale.h>
 
 using std::make_shared;
+
+///
+/// == Terminal ==
+///
 
 Terminal::Terminal() {
     init();
@@ -20,6 +22,10 @@ Terminal::Terminal() {
 Terminal::~Terminal() {
     endwin();
 }
+
+///
+/// == Getters ==
+///
 
 MainPtr Terminal::getMainWindow() const {
     return main;
@@ -40,6 +46,10 @@ int Terminal::getRows() const {
 int Terminal::getColumns() const {
     return columns;
 }
+
+///
+/// == Private methods ==
+///
 
 void Terminal::init() {
     setlocale(LC_ALL, "");

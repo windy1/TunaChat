@@ -4,15 +4,19 @@
 
 #include "ChatClient.h"
 #include "Command.h"
-#include "Terminal/StatusWindow.h"
+#include "Terminal/windows.h"
 #include <sstream>
 
 using std::stringstream;
 
+///
+/// == Command ==
+///
+
 Command::Command(
     ChatClient *client,
     const string &name,
-    int (ChatClient::*exe)(const vector<string>&),
+    CmdExe exe,
     const string &usage,
     int maxArgs,
     int minArgs) :
@@ -22,6 +26,10 @@ Command::Command(
     usage(usage),
     maxArgs(maxArgs),
     minArgs(minArgs) {}
+
+///
+/// == Methods ==
+///
 
 bool Command::matches(const string &cmd) {
     return cmd.substr(0, cmd.find(' ')) == '/' + name;
@@ -39,9 +47,37 @@ int Command::execute(const vector<string> &args) {
     return (client->*exe)(args);
 }
 
+///
+/// == Getters ==
+///
+
+ChatClient* Command::getClient() const {
+    return client;
+}
+
 const string& Command::getName() const {
     return name;
 }
+
+CmdExe Command::getExecutor() const {
+    return exe;
+}
+
+int Command::getMaxArgs() const {
+    return maxArgs;
+}
+
+int Command::getMinArgs() const {
+    return minArgs;
+}
+
+const string& Command::getUsage() const {
+    return usage;
+}
+
+///
+/// == Static methods ==
+///
 
 void Command::parseArgs(const string &cmd, vector<string> &vec) {
     vec.clear();

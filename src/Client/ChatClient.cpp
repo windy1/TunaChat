@@ -3,9 +3,7 @@
 //
 
 #include "ChatClient.h"
-#include "Terminal/InputWindow.h"
-#include "Terminal/StatusWindow.h"
-#include "Terminal/MainWindow.h"
+#include "Terminal/windows.h"
 #include "ServerConn.h"
 #include "Command.h"
 #include <sstream>
@@ -13,16 +11,22 @@
 using std::stringstream;
 using std::make_shared;
 
+///
+/// == ChatClient ==
+///
+
 ChatClient::ChatClient() {
-    commands.push_back(make_shared<Command>(
-        this, "quit", &ChatClient::quit, "Usage: /quit"));
-    commands.push_back(make_shared<Command>(
-        this, "connect", &ChatClient::connect, "Usage: /connect <host> [port]", 2, 1));
-    commands.push_back(make_shared<Command>(
-        this, "auth", &ChatClient::authenticate, "Usage: /auth <user> <pass>", 2, 2));
-    commands.push_back(make_shared<Command>(
-        this, "tell", &ChatClient::tell, "Usage: /tell <user> <message>", -1, 2));
+    commands = {
+        make_shared<Command>(this, "quit", &ChatClient::quit, "Usage: /quit"),
+        make_shared<Command>(this, "connect", &ChatClient::connect, "Usage: /connect <host> [port]", 2, 1),
+        make_shared<Command>(this, "auth", &ChatClient::authenticate, "Usage: /auth <user> <pass>", 2, 2),
+        make_shared<Command>(this, "tell", &ChatClient::tell, "Usage: /tell <user> <message>", -1, 2)
+    };
 }
+
+///
+/// == Methods ==
+///
 
 int ChatClient::start() {
     MainPtr main = term.getMainWindow();
@@ -33,7 +37,6 @@ int ChatClient::start() {
     main->refresh();
 
     while (status != STATUS_CLOSED) {
-
         input->clear();
         input->draw();
 
@@ -58,6 +61,10 @@ int ChatClient::processInput(const string &in) {
     }
     return STATUS_UNKNOWN_CMD;
 }
+
+///
+/// == Command executors ==
+///
 
 int ChatClient::quit(const vector<string> &args) {
     return STATUS_CLOSED;
@@ -117,6 +124,10 @@ int ChatClient::tell(const vector<string> &args) {
         return STATUS_OK;
     }
 }
+
+///
+/// == Getters ==
+///
 
 Terminal& ChatClient::getTerminal() const {
     return (Terminal&) term;

@@ -53,10 +53,29 @@ public:
      */
     int quit(const vector<string> &args);
 
+    /**
+     * Attempts to connect to a specified host on a specified port. Creates and assigns the active connection of this
+     * client.
+     *
+     * @param args command line arguments
+     * @return status code
+     */
     int connect(const vector<string> &args);
 
+    /**
+     * Attempts to authenticate if there is an open connection with the specified username and password.
+     *
+     * @param args command line arguments
+     * @return status code
+     */
     int authenticate(const vector<string> &args);
 
+    /**
+     * Attempts to send a message to the specified user with the specified text.
+     *
+     * @param args command line arguments
+     * @return status code
+     */
     int tell(const vector<string> &args);
 
     /**
@@ -66,8 +85,18 @@ public:
      */
     Terminal& getTerminal() const;
 
+    /**
+     * Returns a vector of all registered Commands on the client.
+     *
+     * @return registered commands for client
+     */
     const vector<CmdPtr>& getCommands() const;
 
+    /**
+     * Returns the active connection if there is one, nullptr otherwise.
+     *
+     * @return active connection
+     */
     ServerConnPtr getConnection() const;
 
     /**

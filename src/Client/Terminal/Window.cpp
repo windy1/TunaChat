@@ -4,6 +4,10 @@
 
 #include "Window.h"
 
+///
+/// == Window ==
+///
+
 Window::Window(Terminal &term, int rows, int columns, int y, int x) : term(term) {
     win = newwin(this->rows = rows, this->columns = columns, y, x);
 }
@@ -12,6 +16,10 @@ Window::~Window() {
     delwin(win);
 }
 
+///
+/// == Methods ==
+///
+
 void Window::drawDivider(const string &ch, int y, int x, int colorPair) {
     string divider;
     for (int i = 0; i < columns; i++) divider += ch;
@@ -19,6 +27,18 @@ void Window::drawDivider(const string &ch, int y, int x, int colorPair) {
     addStr(y, x, divider);
     colorOff(colorPair);
 }
+
+void Window::colorOn(int colorPair) {
+    wattron(win, COLOR_PAIR(colorPair));
+}
+
+void Window::colorOff(int colorPair) {
+    wattroff(win, COLOR_PAIR(colorPair));
+}
+
+///
+/// == Wrapper methods ==
+///
 
 void Window::addStr(int y, int x, const string &str) {
     mvwaddstr(win, y, x, str.c_str());
@@ -30,18 +50,6 @@ void Window::getStr(string &str) {
     str = s;
 }
 
-void Window::print(const string &str) {
-    wprintw(win, str.c_str());
-}
-
-void Window::colorOn(int colorPair) {
-    wattron(win, COLOR_PAIR(colorPair));
-}
-
-void Window::colorOff(int colorPair) {
-    wattroff(win, COLOR_PAIR(colorPair));
-}
-
 void Window::refresh() {
     wrefresh(win);
 }
@@ -49,6 +57,10 @@ void Window::refresh() {
 void Window::clear() {
     wclear(win);
 }
+
+///
+/// == Getters ==
+///
 
 int Window::getRows() const {
     return rows;
