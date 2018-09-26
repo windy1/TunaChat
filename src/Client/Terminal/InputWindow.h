@@ -5,20 +5,12 @@
 #ifndef TUNACHAT_INPUTWINDOW_H
 #define TUNACHAT_INPUTWINDOW_H
 
-#include "Terminal.h"
-#include <thread>
-
-using std::thread;
+#include "Window.h"
 
 class InputWindow : public Window {
-
-    Terminal &term;
-
 public:
 
     explicit InputWindow(Terminal &term);
-
-    ~InputWindow();
 
     void draw();
 

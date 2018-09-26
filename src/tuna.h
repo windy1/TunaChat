@@ -13,6 +13,8 @@
 #define STATUS_BAD_LISTEN   502
 #define STATUS_BAD_REQUEST  400
 #define STATUS_NO_DATA      404
+#define STATUS_UNKNOWN_CMD  401
+#define STATUS_INVALID_ARG  402
 
 #define PROTO_HELLO     "HELLO"
 #define PROTO_AUTHYES   "AUTHYES"
@@ -25,6 +27,10 @@
 #define PROTO_FROM      "From"
 #define PROTO_BYE       "BYE"
 
-#define COLOR_PAIR_DIVIDER 1
+#define COLOR_PAIR_DIVIDER  1
+#define COLOR_PAIR_ERROR    2
+
+#define CLIENT_QUIT "/quit"
+#define CLIENT_CONN "/connect"
 
 #endif //TUNACHAT_TUNA_H
