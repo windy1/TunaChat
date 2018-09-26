@@ -14,14 +14,17 @@ using std::string;
 using std::vector;
 
 class Command;
+class ServerConn;
 
 typedef shared_ptr<Command> CmdPtr;
+typedef shared_ptr<ServerConn> ServerConnPtr;
 
 class ChatClient {
 
     Terminal term;
     int status = STATUS_OK;
     vector<CmdPtr> commands;
+    ServerConnPtr conn;
 
 public:
 
@@ -52,12 +55,20 @@ public:
 
     int connect(const vector<string> &args);
 
+    int authenticate(const vector<string> &args);
+
+    int tell(const vector<string> &args);
+
     /**
      * Returns the Terminal interface for this client.
      *
      * @return Terminal
      */
     Terminal& getTerminal() const;
+
+    const vector<CmdPtr>& getCommands() const;
+
+    ServerConnPtr getConnection() const;
 
     /**
      * Returns the client's current status code.

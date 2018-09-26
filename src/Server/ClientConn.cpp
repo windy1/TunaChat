@@ -41,8 +41,9 @@ ClientConn::ClientConn(ChatServer &server, sockaddr_in address, int socket) :
 
 bool ClientConn::verify() {
     if (strcmp(readLine()->c_str(), PROTO_HELLO) == 0) {
-        write(socket, PROTO_HELLO, strlen(PROTO_HELLO));
-        write(socket, "\n", 1);
+        char data[1024];
+        sprintf(data, "%s\n", PROTO_HELLO);
+        write(socket, data, strlen(data));
         return true;
     }
     close("INVALID_HANDSHAKE", STATUS_BAD_REQUEST);
@@ -69,17 +70,15 @@ bool ClientConn::authenticate() {
 
     this->user = server.authenticate(user, pwd);
     if (this->user != nullptr) {
-        write(socket, PROTO_AUTHYES, strlen(PROTO_AUTHYES));
-        write(socket, "\n", 1);
-        write(socket, PROTO_SIGNIN, strlen(PROTO_SIGNIN));
-        write(socket, ":", 1);
-        write(socket, user.c_str(), user.size());
-        write(socket, "\n", 1);
+        char data[1024];
+        sprintf(data, "%s\n%s:%s\n", PROTO_AUTHYES, PROTO_SIGNIN, user.c_str());
+        write(socket, data, strlen(data));
         return true;
     }
 
-    write(socket, PROTO_AUTHNO, strlen(PROTO_AUTHNO));
-    write(socket, "\n", 1);
+    char data[1024];
+    sprintf(data, "%s\n", PROTO_AUTHNO);
+    write(socket, data, strlen(data));
 
     return false;
 }
@@ -118,20 +117,16 @@ void ClientConn::processCommand() {
 
 void ClientConn::sendMessage(const string &from, const string &text) {
     printf("SEND [%s => %s]\n", from.c_str(), getTag().c_str());
-    write(socket, PROTO_FROM, strlen(PROTO_FROM));
-    write(socket, ":", 1);
-    write(socket, from.c_str(), from.size());
-    write(socket, ":", 1);
-    write(socket, text.c_str(), text.size());
-    write(socket, "\n", 1);
+    char data[1024];
+    sprintf(data, "%s:%s:%s\n", PROTO_FROM, from.c_str(), text.c_str());
+    write(socket, data, strlen(data));
 }
 
 void ClientConn::shutdown() {
     printf("SHUTDOWN [%s]\n", getTag().c_str());
-    write(socket, PROTO_SIGNOFF, strlen(PROTO_SIGNOFF));
-    write(socket, ":", 1);
-    write(socket, user->getName().c_str(), user->getName().size());
-    write(socket, "\n", 1);
+    char data[1024];
+    sprintf(data, "%s:%s\n", PROTO_SIGNOFF, user->getName().c_str());
+    write(socket, data, strlen(data));
     status = STATUS_SHUTDOWN;
     // shutdown() disables further operations on the socket while still keeping the socket descriptor so that if recv()
     // is blocking, the connection can be closed gracefully from another thread
@@ -213,12 +208,14 @@ const string* ClientConn::readLine() {
 void ClientConn::writeUserList() {
     printf("LIST [%s]\n", getTag().c_str());
     const vector<UserPtr> &userList = server.getUserList();
+    string data;
     for (int i = 0; i < userList.size(); i++) {
         const string &name = userList[i]->getName();
-        write(socket, name.c_str(), name.size());
-        if (i < userList.size() - 1) write(socket, ",", 1);
+        data += name;
+        if (i < userList.size() - 1) data += ',';
     }
-    write(socket, "\n", 1);
+    data += '\n';
+    write(socket, data.c_str(), data.size());
 }
 
 ///
