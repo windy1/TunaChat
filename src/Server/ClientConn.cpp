@@ -124,13 +124,16 @@ void ClientConn::sendMessage(const string &from, const string &text) {
 
 void ClientConn::shutdown() {
     printf("SHUTDOWN [%s]\n", getTag().c_str());
-    char data[1024];
-    sprintf(data, "%s:%s\n", PROTO_SIGNOFF, user->getName().c_str());
-    write(socket, data, strlen(data));
     status = STATUS_SHUTDOWN;
     // shutdown() disables further operations on the socket while still keeping the socket descriptor so that if recv()
     // is blocking, the connection can be closed gracefully from another thread
     ::shutdown(socket, SHUT_RDWR);
+}
+
+void ClientConn::goodbye(UserPtr user) {
+    char data[1024];
+    sprintf(data, "%s:%s\n", PROTO_SIGNOFF, user->getName().c_str());
+    write(socket, data, strlen(data));
 }
 
 void* ClientConn::close(const string &msg, int status) {

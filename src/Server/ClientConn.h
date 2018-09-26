@@ -86,6 +86,13 @@ public:
     void shutdown();
 
     /**
+     * Signals to the client the the specified User has signed-off.
+     *
+     * @param user that signed off
+     */
+    void goodbye(UserPtr user);
+
+    /**
      * Forcibly closes the connection with the specified message and status code.
      *
      * @param msg status message

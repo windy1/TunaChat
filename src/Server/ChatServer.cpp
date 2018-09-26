@@ -115,6 +115,12 @@ int ChatServer::cleanup(UserPtr user) {
         }
     }
     userList.erase(remove(userList.begin(), userList.end(), user), userList.end());
+
+    // notify others
+    for (auto &conn : connections) {
+        conn->goodbye(user);
+    }
+
     return removed;
 }
 
