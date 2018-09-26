@@ -2,8 +2,12 @@
 // Created by Walker Crouse on 9/26/18.
 //
 
+#include "ChatClient.h"
 #include "Command.h"
 #include "Terminal/StatusWindow.h"
+#include <sstream>
+
+using std::stringstream;
 
 Command::Command(
     ChatClient *client,
@@ -38,4 +42,16 @@ int Command::execute(const vector<string> &args) {
 
 const string& Command::getName() const {
     return name;
+}
+
+void Command::parseArgs(const string &cmd, vector<string> &vec) {
+    vec.clear();
+    size_t begin = cmd.find(' ');
+    if (begin == string::npos || begin + 1 > cmd.size()) return;
+    string args = cmd.substr(begin + 1);
+    stringstream in(args);
+    string arg;
+    while (getline(in, arg, ' ')) {
+        vec.push_back(arg);
+    }
 }

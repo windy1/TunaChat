@@ -4,7 +4,7 @@
 
 #include "tests.h"
 #include "ChatClient.h"
-#include <cstdio>
+#include "Command.h"
 
 int runTests() {
     int failed = 0;
@@ -16,6 +16,6 @@ bool test_ChatClient_parseArgs() {
     printf("== test_ChatClient_parseArgs ==\n");
     string cmd = "/test hello world foo bar";
     vector<string> args;
-    ChatClient::parseArgs(cmd, args);
+    Command::parseArgs(cmd, args);
     return args[0] == "hello" && args[1] == "world" && args[2] == "foo" && args[3] == "bar";
 }

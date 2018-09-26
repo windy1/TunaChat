@@ -35,6 +35,7 @@ public:
 
     const string& getName() const;
 
+    static void parseArgs(const string &cmd, vector<string> &vec);
 };
 
 #endif //TUNACHAT_COMMAND_H

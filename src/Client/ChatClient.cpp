@@ -37,7 +37,7 @@ int ChatClient::start() {
 
         string strIn;
         input->getStr(strIn);
-        processInput(strIn);
+        status = processInput(strIn);
     }
 
     return status;
@@ -45,44 +45,17 @@ int ChatClient::start() {
 
 int ChatClient::processInput(const string &in) {
     vector<string> args;
-    parseArgs(in, args);
+    Command::parseArgs(in, args);
     for (auto &cmd : commands) {
         if (cmd->matches(in)) {
             return cmd->execute(args);
         }
     }
-
-//    if (in.substr(0, strlen(CLIENT_CONN)) == CLIENT_CONN) {
-//        StatusPtr statusWin = term.getStatusWindow();
-//
-//        vector<string> args;
-//        parseArgs(in, args);
-//
-//        if (args.empty()) {
-//            statusWin->drawError("Usage: /connect <host> [port]");
-//            statusWin->refresh();
-//            return status = STATUS_INVALID_ARG;
-//        }
-//
-//        int port = 12000;
-//        if (args.size() > 1) {
-//            try {
-//                port = stoi(args[1]);
-//            } catch (...) {
-//                statusWin->drawError("Invalid port number.");
-//                statusWin->refresh();
-//                return status = STATUS_INVALID_ARG;
-//            }
-//        }
-//
-//        return connect(args[0], port);
-//    }
-
-    return status = STATUS_UNKNOWN_CMD;
+    return STATUS_UNKNOWN_CMD;
 }
 
 int ChatClient::quit(const vector<string> &args) {
-    return status = STATUS_CLOSED;
+    return STATUS_CLOSED;
 }
 
 int ChatClient::connect(const vector<string> &args) {
@@ -95,7 +68,7 @@ int ChatClient::connect(const vector<string> &args) {
         } catch (...) {
             statusWin->drawError("Invalid port number.");
             statusWin->refresh();
-            return status = STATUS_INVALID_ARG;
+            return STATUS_INVALID_ARG;
         }
     }
 
@@ -107,10 +80,10 @@ int ChatClient::connect(const vector<string> &args) {
     sockaddr_in addr{};
     int socket = ::socket(AF_INET, SOCK_STREAM, 0);
     if (socket < 0) {
-        return status = STATUS_BAD_SOCKET;
+        return STATUS_BAD_SOCKET;
     }
 
-    return status;
+    return STATUS_OK;
 }
 
 Terminal& ChatClient::getTerminal() const {
@@ -121,14 +94,3 @@ int ChatClient::getStatus() const {
     return status;
 }
 
-void ChatClient::parseArgs(const string &cmd, vector<string> &vec) {
-    vec.clear();
-    size_t begin = cmd.find(' ');
-    if (begin == string::npos || begin + 1 > cmd.size()) return;
-    string args = cmd.substr(begin + 1);
-    stringstream in(args);
-    string arg;
-    while (getline(in, arg, ' ')) {
-        vec.push_back(arg);
-    }
-}
