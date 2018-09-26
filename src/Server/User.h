@@ -14,7 +14,7 @@ class User {
 
     ChatServer &server;
     string name;
-    mutable vector<CliConnPtr> connections;
+    mutable vector<ClientConnPtr> connections;
 
 public:
 
@@ -34,7 +34,7 @@ public:
      *
      * @return connections associated with user
      */
-    const vector<CliConnPtr>& getConnections() const;
+    const vector<ClientConnPtr>& getConnections() const;
 
     /**
      * Returns the server associated with this User.

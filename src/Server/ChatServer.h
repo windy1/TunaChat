@@ -5,14 +5,14 @@
 #ifndef TUNACHAT_CHATSERVER_H
 #define TUNACHAT_CHATSERVER_H
 
-#include "tuna.h"
+#include "../tuna.h"
 #include <cstdint>
 #include <sys/socket.h>
 #include <iostream>
 #include <netinet/in.h>
 #include <unistd.h>
 #include <thread>
-#include <stdio.h>
+#include <cstdio>
 #include <sstream>
 #include <vector>
 
@@ -20,10 +20,10 @@ using std::vector;
 using std::string;
 
 class User;
-class CliConn;
+class ClientConn;
 
 typedef std::shared_ptr<User> UserPtr;
-typedef std::shared_ptr<CliConn> CliConnPtr;
+typedef std::shared_ptr<ClientConn> ClientConnPtr;
 
 class ChatServer {
 
@@ -35,7 +35,7 @@ class ChatServer {
     int backlog;
     int bufferSize;
     vector<UserPtr> userList;
-    vector<CliConnPtr> connections;
+    vector<ClientConnPtr> connections;
     int status;
 
     /**
@@ -113,7 +113,7 @@ public:
      *
      * @return current connections
      */
-    const vector<CliConnPtr>& getConnections() const;
+    const vector<ClientConnPtr>& getConnections() const;
 
     /**
      * Returns the address this server is running on.

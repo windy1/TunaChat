@@ -2,7 +2,7 @@
 // Created by Walker Crouse on 9/24/18.
 //
 
-#include "CliConn.h"
+#include "ClientConn.h"
 #include "User.h"
 #include <memory>
 
@@ -50,11 +50,11 @@ int ChatServer::start() {
     int addrLen = sizeof(sockaddr_in);
     int clientSocket;
     while ((clientSocket = accept(socket, (sockaddr*) &cliAddr, (socklen_t*) &addrLen))) {
-        CliConnPtr conn = make_shared<CliConn>(*this, cliAddr, clientSocket);
+        ClientConnPtr conn = make_shared<ClientConn>(*this, cliAddr, clientSocket);
         connections.push_back(conn);
     }
 
-    return STATUS_OK;
+    return status;
 }
 
 UserPtr ChatServer::authenticate(const string &user, const string &pwd) {
@@ -133,7 +133,7 @@ UserPtr ChatServer::getUser(const string &name) const {
     return nullptr;
 }
 
-const vector<CliConnPtr>& ChatServer::getConnections() const {
+const vector<ClientConnPtr>& ChatServer::getConnections() const {
     return connections;
 }
 

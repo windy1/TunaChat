@@ -3,7 +3,7 @@
 //
 
 #include "User.h"
-#include "CliConn.h"
+#include "ClientConn.h"
 
 ///
 /// == User ==
@@ -24,7 +24,7 @@ int User::sendMessage(const string &from, const string &text) {
     return sent;
 }
 
-const vector<CliConnPtr>& User::getConnections() const {
+const vector<ClientConnPtr>& User::getConnections() const {
     connections.clear();
     for (auto &conn : server.getConnections()) {
         UserPtr user = conn->getUser();

@@ -2,33 +2,33 @@
 // Created by Walker Crouse on 9/24/18.
 //
 
-#include "CliConn.h"
+#include "ClientConn.h"
 #include "User.h"
 #include <arpa/inet.h>
 
 using std::stringstream;
 
 /**
- * Thread function for handling new incoming connections. Encapsulates the entire lifetime of a CliConn and enforces
+ * Thread function for handling new incoming connections. Encapsulates the entire lifetime of a ClientConn and enforces
  * protocol.
  *
  * @param cli client connection
  * @return status code
  */
-int handleConnection(CliConn *cli);
+int handleConnection(ClientConn *cli);
 
 ///
 /// == Statics ==
 ///
 
-const string CliConn::NAME_UNKNOWN = "UNKNOWN";
-int CliConn::LAST_ID = 0;
+const string ClientConn::NAME_UNKNOWN = "UNKNOWN";
+int ClientConn::LAST_ID = 0;
 
 ///
-/// == CliConn ==
+/// == ClientConn ==
 ///
 
-CliConn::CliConn(ChatServer &server, sockaddr_in address, int socket) :
+ClientConn::ClientConn(ChatServer &server, sockaddr_in address, int socket) :
     server(server),
     address(address),
     socket(socket),
@@ -39,7 +39,7 @@ CliConn::CliConn(ChatServer &server, sockaddr_in address, int socket) :
 /// == Methods ==
 ///
 
-bool CliConn::verify() {
+bool ClientConn::verify() {
     if (strcmp(readLine()->c_str(), PROTO_HELLO) == 0) {
         write(socket, PROTO_HELLO, strlen(PROTO_HELLO));
         write(socket, "\n", 1);
@@ -49,7 +49,7 @@ bool CliConn::verify() {
     return false;
 }
 
-bool CliConn::authenticate() {
+bool ClientConn::authenticate() {
     const string* authLine = readLine();
     unsigned long sep1 = authLine->find(':');
     unsigned long sep2 = authLine->rfind(':');
@@ -84,7 +84,7 @@ bool CliConn::authenticate() {
     return false;
 }
 
-void CliConn::processCommand() {
+void ClientConn::processCommand() {
     const string* cmd = readLine();
 
     if (status == STATUS_SHUTDOWN) {
@@ -116,7 +116,7 @@ void CliConn::processCommand() {
     }
 }
 
-void CliConn::sendMessage(const string &from, const string &text) {
+void ClientConn::sendMessage(const string &from, const string &text) {
     printf("SEND [%s => %s]\n", from.c_str(), getTag().c_str());
     write(socket, PROTO_FROM, strlen(PROTO_FROM));
     write(socket, ":", 1);
@@ -126,7 +126,7 @@ void CliConn::sendMessage(const string &from, const string &text) {
     write(socket, "\n", 1);
 }
 
-void CliConn::shutdown() {
+void ClientConn::shutdown() {
     printf("SHUTDOWN [%s]\n", getTag().c_str());
     write(socket, PROTO_SIGNOFF, strlen(PROTO_SIGNOFF));
     write(socket, ":", 1);
@@ -138,7 +138,7 @@ void CliConn::shutdown() {
     ::shutdown(socket, SHUT_RDWR);
 }
 
-void* CliConn::close(const string &msg, int status) {
+void* ClientConn::close(const string &msg, int status) {
     fprintf(stderr, "%s [%s] (code: %d)\n", msg.c_str(), getTag().c_str(), status);
     ::close(socket);
     this->status = status;
@@ -149,41 +149,41 @@ void* CliConn::close(const string &msg, int status) {
 /// == Getters ==
 ///
 
-ChatServer& CliConn::getServer() const {
+ChatServer& ClientConn::getServer() const {
     return server;
 }
 
-UserPtr CliConn::getUser() const {
+UserPtr ClientConn::getUser() const {
     return user;
 }
 
-const string& CliConn::getTag() const {
+const string& ClientConn::getTag() const {
     string name = NAME_UNKNOWN;
     string addr = inet_ntoa(address.sin_addr);
     return tag = name + '@' + addr;
 }
 
-int CliConn::getId() const {
+int ClientConn::getId() const {
     return id;
 }
 
-const sockaddr_in& CliConn::getAddress() const {
+const sockaddr_in& ClientConn::getAddress() const {
     return address;
 }
 
-int CliConn::getSocket() const {
+int ClientConn::getSocket() const {
     return socket;
 }
 
-const string* CliConn::getLastMessage() const {
+const string* ClientConn::getLastMessage() const {
     return &lastMessage;
 }
 
-int CliConn::getStatus() const {
+int ClientConn::getStatus() const {
     return status;
 }
 
-thread& CliConn::getThread() {
+thread& ClientConn::getThread() {
     return th;
 }
 
@@ -191,7 +191,7 @@ thread& CliConn::getThread() {
 /// == Private methods ==
 ///
 
-const string* CliConn::readLine() {
+const string* ClientConn::readLine() {
     int bufferSize = server.getBufferSize();
     char buffer[bufferSize];
     ssize_t readSize = recv(socket, buffer, (size_t) bufferSize, 0);
@@ -210,7 +210,7 @@ const string* CliConn::readLine() {
     return &lastMessage;
 }
 
-void CliConn::writeUserList() {
+void ClientConn::writeUserList() {
     printf("LIST [%s]\n", getTag().c_str());
     const vector<UserPtr> &userList = server.getUserList();
     for (int i = 0; i < userList.size(); i++) {
@@ -225,7 +225,7 @@ void CliConn::writeUserList() {
 /// == Main method for new connections ==
 ///
 
-int handleConnection(CliConn *cli) {
+int handleConnection(ClientConn *cli) {
     printf("CONNECTION [%s]\n", cli->getTag().c_str());
 
     // 1. Handshake

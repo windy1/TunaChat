@@ -11,7 +11,7 @@
 using std::string;
 using std::thread;
 
-class CliConn {
+class ClientConn {
 
     static const string NAME_UNKNOWN;
     static int LAST_ID;
@@ -44,7 +44,7 @@ class CliConn {
 
 public:
 
-    CliConn(ChatServer &server, sockaddr_in address, int socket);
+    ClientConn(ChatServer &server, sockaddr_in address, int socket);
 
     /**
      * Initiates the handshake protocol for the connection by reading an expected "HELLO" from the client and sends one

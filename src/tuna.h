@@ -25,4 +25,6 @@
 #define PROTO_FROM      "From"
 #define PROTO_BYE       "BYE"
 
+#define COLOR_PAIR_DIVIDER 1
+
 #endif //TUNACHAT_TUNA_H
