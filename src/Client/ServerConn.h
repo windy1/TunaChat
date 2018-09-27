@@ -7,9 +7,14 @@
 
 #include "ChatClient.h"
 
+class MessageChannel;
+
+typedef shared_ptr<MessageChannel> MsgChanPtr;
+
 class ServerConn {
 
     ChatClient &client;
+    MsgChanPtr msgChan;
     string host;
     int port;
     int socket;
@@ -67,6 +72,8 @@ public:
      * @return client instance
      */
     ChatClient& getClient() const;
+
+    MsgChanPtr getMessageChannel() const;
 
     /**
      * Returns true if this connection has been authenticated.

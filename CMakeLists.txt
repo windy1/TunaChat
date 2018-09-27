@@ -13,6 +13,6 @@ add_executable(TunaChat
         src/Server/User.cpp src/Server/User.h
         src/tuna.h
         src/Client/ChatClient.cpp src/Client/ChatClient.h
-        src/Client/Terminal/Terminal.cpp src/Client/Terminal/Terminal.h src/Client/Terminal/Window.cpp src/Client/Terminal/Window.h src/Client/tests.h src/Client/tests.cpp src/Client/Command.cpp src/Client/Command.h src/Client/ServerConn.cpp src/Client/ServerConn.h src/Client/Terminal/windows.h src/Client/Terminal/windows.cpp)
+        src/Client/Terminal/Terminal.cpp src/Client/Terminal/Terminal.h src/Client/Terminal/Window.cpp src/Client/Terminal/Window.h src/Client/tests.h src/Client/tests.cpp src/Client/Command.cpp src/Client/Command.h src/Client/ServerConn.cpp src/Client/ServerConn.h src/Client/Terminal/windows.h src/Client/Terminal/windows.cpp src/Client/MessageChannel.cpp src/Client/MessageChannel.h src/tuna.cpp)
 
 target_link_libraries(TunaChat ${CURSES_LIBRARIES})

@@ -41,7 +41,7 @@ int Command::execute(const vector<string> &args) {
     if (minArgs != -1 && args.size() < minArgs) invalid = true;
     if (invalid) {
         StatusPtr statusWin = client->getTerminal().getStatusWindow();
-        statusWin->drawError(usage);
+        statusWin->error(usage);
         return STATUS_INVALID_ARG;
     }
     return (client->*exe)(args);

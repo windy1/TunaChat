@@ -33,18 +33,22 @@ int ChatClient::start() {
     StatusPtr statusWin = term.getStatusWindow();
     InputPtr input = term.getInputWindow();
 
-    main->draw();
     main->refresh();
 
     while (status != STATUS_CLOSED) {
         input->clear();
-        input->draw();
+        input->divider();
+        input->tag();
 
+        statusWin->divider();
+
+        main->refresh();
         statusWin->refresh();
         input->refresh();
 
         string strIn;
         input->getStr(strIn);
+
         status = processInput(strIn);
     }
 
@@ -83,7 +87,7 @@ int ChatClient::connect(const vector<string> &args) {
         try {
             port = stoi(args[1]);
         } catch (...) {
-            statusWin->drawError("Invalid port number.");
+            statusWin->error("Invalid port number.");
             return STATUS_INVALID_ARG;
         }
     }
@@ -104,7 +108,7 @@ int ChatClient::authenticate(const vector<string> &args) {
         conn->authenticate(user, pwd);
         return STATUS_OK;
     } else {
-        term.getStatusWindow()->drawError("You are not connected to a server");
+        term.getStatusWindow()->error("You are not connected to a server");
         return STATUS_OK;
     }
 }
@@ -120,7 +124,7 @@ int ChatClient::tell(const vector<string> &args) {
         conn->sendMessage(user, msg);
         return STATUS_OK;
     } else {
-        term.getStatusWindow()->drawError("You are not connected to a server");
+        term.getStatusWindow()->error("You are not connected to a server");
         return STATUS_OK;
     }
 }

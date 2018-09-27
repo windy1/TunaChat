@@ -14,9 +14,10 @@ using std::string;
 class Terminal;
 
 class Window {
-protected:
 
     WINDOW *win;
+
+protected:
 
     Terminal &term;
 
@@ -93,6 +94,7 @@ public:
     void getStr(string &str);
     void refresh();
     void clear();
+    void scrollOk(bool scroll);
 
     /// ======================
 

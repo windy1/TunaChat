@@ -32,7 +32,13 @@
 #define COLOR_PAIR_DIVIDER  1
 #define COLOR_PAIR_ERROR    2
 
-#define CLIENT_QUIT "/quit"
-#define CLIENT_CONN "/connect"
+#include <string>
+#include <vector>
+
+int readLine(std::string &data, int socket, int bufferSize);
+
+bool parse3(const std::string &str, std::string &header, std::string &body1, std::string &body2);
+
+bool parse2(const std::string &str, std::string &header, std::string &body);
 
 #endif //TUNACHAT_TUNA_H

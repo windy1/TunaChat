@@ -58,6 +58,10 @@ void Window::clear() {
     wclear(win);
 }
 
+void Window::scrollOk(bool scroll) {
+    scrollok(win, scroll);
+}
+
 ///
 /// == Getters ==
 ///

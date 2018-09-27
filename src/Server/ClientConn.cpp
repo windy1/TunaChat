@@ -52,16 +52,13 @@ bool ClientConn::verify() {
 
 bool ClientConn::authenticate() {
     const string* authLine = readLine();
-    unsigned long sep1 = authLine->find(':');
-    unsigned long sep2 = authLine->rfind(':');
-    if (sep1 == string::npos || sep2 == string::npos || sep1 == sep2) {
+    string header;
+    string user;
+    string pwd;
+    if (!parse3(*authLine, header, user, pwd)) {
         close("AUTH_LINE_FORMAT", STATUS_BAD_REQUEST);
         return false;
     }
-
-    string header = authLine->substr(0, sep1);
-    string user = authLine->substr(sep1 + 1, sep2 - header.size() - 1);
-    string pwd = authLine->substr(sep2 + 1, string::npos);
 
     if (strcmp(header.c_str(), PROTO_AUTH) != 0) {
         close("AUTH_LINE_FORMAT", STATUS_BAD_REQUEST);
@@ -95,16 +92,20 @@ void ClientConn::processCommand() {
     } else if (strcmp(cmd->c_str(), PROTO_BYE) == 0) {
         server.signOff(user->getName());
     } else {
-        unsigned long sep1 = cmd->find(':');
-        unsigned long sep2 = cmd->rfind(':');
-        if (sep1 == string::npos || sep2 == string::npos) {
+        string header;
+        string usr;
+        string text;
+        if (!parse3(*cmd, header, usr, text)) {
             close("INVALID_COMMAND", STATUS_BAD_REQUEST);
             return;
         }
 
-        string header = cmd->substr(0, sep1);
-        string usr = cmd->substr(sep1 + 1, sep2 - header.size() - 1);
-        string text = cmd->substr(sep2 + 1, string::npos);
+//        unsigned long sep1 = cmd->find(':');
+//        unsigned long sep2 = cmd->rfind(':');
+//        if (sep1 == string::npos || sep2 == string::npos) {
+//            close("INVALID_COMMAND", STATUS_BAD_REQUEST);
+//            return;
+//        }
 
         if (strcmp(header.c_str(), PROTO_TO) != 0) {
             close("INVALID_COMMAND", STATUS_BAD_REQUEST);
@@ -157,6 +158,7 @@ UserPtr ClientConn::getUser() const {
 
 const string& ClientConn::getTag() const {
     string name = NAME_UNKNOWN;
+    if (user != nullptr) name = user->getName();
     string addr = inet_ntoa(address.sin_addr);
     return tag = name + '@' + addr;
 }
@@ -190,9 +192,8 @@ thread& ClientConn::getThread() {
 ///
 
 const string* ClientConn::readLine() {
-    int bufferSize = server.getBufferSize();
-    char buffer[bufferSize];
-    ssize_t readSize = recv(socket, buffer, (size_t) bufferSize, 0);
+    string data;
+    int readSize = ::readLine(data, socket, server.getBufferSize());
 
     if (status == STATUS_SHUTDOWN) {
         // check for shutdown signal that may have been set async while waiting for recv
@@ -203,9 +204,7 @@ const string* ClientConn::readLine() {
         return (string*) close("NO_DATA", STATUS_NO_DATA);
     }
 
-    stringstream in(buffer);
-    in >> lastMessage;
-    return &lastMessage;
+    return &(lastMessage = data);
 }
 
 void ClientConn::writeUserList() {

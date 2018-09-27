@@ -6,39 +6,51 @@
 #define TUNACHAT_WINDOWS_H
 
 #include "Window.h"
+#include <vector>
+
+using std::vector;
 
 class StatusWindow : public Window {
 public:
 
     explicit StatusWindow(Terminal &term);
 
+    void divider();
+
     /**
      * Clears the window and adds the specified error.
      *
      * @param err error to set
      */
-    void drawError(const string &err);
+    void error(const string &err);
 
 };
 
 class MainWindow : public Window {
+
+    string logText;
+
 public:
 
     explicit MainWindow(Terminal &term);
 
-    void draw();
+    void log(const string &text);
+
+    void log(const string &user, const string &text);
 
 };
 
 class InputWindow : public Window {
 
-    string tag;
+    string tagStr;
 
 public:
 
     explicit InputWindow(Terminal &term);
 
-    void draw();
+    void divider();
+
+    void tag();
 
     void setTag(const string &tag);
 

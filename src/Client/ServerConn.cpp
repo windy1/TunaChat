@@ -4,6 +4,7 @@
 
 #include "ServerConn.h"
 #include "Terminal/windows.h"
+#include "MessageChannel.h"
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -11,6 +12,7 @@
 #include <sstream>
 
 using std::stringstream;
+using std::make_shared;
 
 ///
 /// == ServerConn ==
@@ -38,12 +40,17 @@ int ServerConn::authenticate(const string &user, const string &pwd) {
         st->clear();
         st->addStr(0, 0, "Successfully authenticated as " + user);
         client.getTerminal().getInputWindow()->setTag(user);
+
+        client.getTerminal().getMainWindow()->log("DEBUG");
+
+        msgChan = make_shared<MessageChannel>(*this);
+
         return STATUS_OK;
     } else if (strcmp(res.c_str(), PROTO_AUTHNO) == 0) {
-        st->drawError("Invalid username or password");
+        st->error("Invalid username or password");
         return STATUS_INVALID_ARG;
     } else {
-        st->drawError("An unknown server error occurred");
+        st->error("An unknown server error occurred");
         return STATUS_BAD_RESPONSE;
     }
 }
@@ -61,6 +68,10 @@ int ServerConn::sendMessage(const string &user, const string &text) {
 
 ChatClient& ServerConn::getClient() const {
     return client;
+}
+
+MsgChanPtr ServerConn::getMessageChannel() const {
+    return msgChan;
 }
 
 bool ServerConn::isAuthenticated() const {
@@ -97,7 +108,7 @@ int ServerConn::init() {
 
     socket = ::socket(AF_INET, SOCK_STREAM, 0);
     if (socket < 0) {
-        statusWin->drawError("Bad socket");
+        statusWin->error("Bad socket");
         return STATUS_BAD_SOCKET;
     }
 
@@ -106,12 +117,12 @@ int ServerConn::init() {
     addr.sin_port = htons(port);
 
     if (inet_pton(AF_INET, host.c_str(), &addr.sin_addr) <= 0) {
-        statusWin->drawError("Invalid host name.");
+        statusWin->error("Invalid host name.");
         return STATUS_INVALID_ARG;
     }
 
     if (::connect(socket, (sockaddr*) &addr, sizeof(addr)) < 0) {
-        statusWin->drawError("Connection failed.");
+        statusWin->error("Connection failed.");
         return STATUS_BAD_CONNECT;
     }
 
@@ -127,7 +138,7 @@ int ServerConn::sayHello() {
     string res;
     getResponse(PROTO_HELLO, res);
     if (strcmp(res.c_str(), PROTO_HELLO) != 0) {
-        client.getTerminal().getStatusWindow()->drawError("Connection refused.");
+        client.getTerminal().getStatusWindow()->error("Connection refused.");
         return STATUS_BAD_RESPONSE;
     }
     return STATUS_OK;
