@@ -68,7 +68,7 @@ bool ClientConn::authenticate() {
     this->user = server.authenticate(user, pwd);
     if (this->user != nullptr) {
         char data[1024];
-        sprintf(data, "%s\n%s:%s\n", PROTO_AUTHYES, PROTO_SIGNIN, user.c_str());
+        sprintf(data, "%s\n", PROTO_AUTHYES);
         write(socket, data, strlen(data));
         return true;
     }
@@ -127,6 +127,12 @@ void ClientConn::shutdown() {
 void ClientConn::goodbye(UserPtr user) {
     char data[1024];
     sprintf(data, "%s:%s\n", PROTO_SIGNOFF, user->getName().c_str());
+    write(socket, data, strlen(data));
+}
+
+void ClientConn::hello(UserPtr user) {
+    char data[1024];
+    sprintf(data, "%s:%s\n", PROTO_SIGNIN, user->getName().c_str());
     write(socket, data, strlen(data));
 }
 

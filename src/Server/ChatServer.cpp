@@ -64,6 +64,14 @@ UserPtr ChatServer::authenticate(const string &user, const string &pwd) {
         usr = make_shared<User>(*this, user);
         userList.push_back(usr);
     }
+
+    // notify others
+    for (auto &u : userList) {
+        for (auto &conn : u->getConnections()) {
+            conn->hello(usr);
+        }
+    }
+
     return usr;
 }
 

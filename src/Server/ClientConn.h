@@ -92,6 +92,8 @@ public:
      */
     void goodbye(UserPtr user);
 
+    void hello(UserPtr user);
+
     /**
      * Forcibly closes the connection with the specified message and status code.
      *
