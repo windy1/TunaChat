@@ -100,13 +100,6 @@ void ClientConn::processCommand() {
             return;
         }
 
-//        unsigned long sep1 = cmd->find(':');
-//        unsigned long sep2 = cmd->rfind(':');
-//        if (sep1 == string::npos || sep2 == string::npos) {
-//            close("INVALID_COMMAND", STATUS_BAD_REQUEST);
-//            return;
-//        }
-
         if (strcmp(header.c_str(), PROTO_TO) != 0) {
             close("INVALID_COMMAND", STATUS_BAD_REQUEST);
             return;

@@ -20,7 +20,8 @@ ChatClient::ChatClient() {
         make_shared<Command>(this, "quit", &ChatClient::quit, "Usage: /quit"),
         make_shared<Command>(this, "connect", &ChatClient::connect, "Usage: /connect <host> [port]", 2, 1),
         make_shared<Command>(this, "auth", &ChatClient::authenticate, "Usage: /auth <user> <pass>", 2, 2),
-        make_shared<Command>(this, "tell", &ChatClient::tell, "Usage: /tell <user> <message>", -1, 2)
+        make_shared<Command>(this, "tell", &ChatClient::tell, "Usage: /tell <user> <message>", -1, 2),
+        make_shared<Command>(this, "list", &ChatClient::list, "Usage: /list")
     };
 }
 
@@ -42,6 +43,8 @@ int ChatClient::start() {
 
         statusWin->divider();
 
+        main->flush();
+
         main->refresh();
         statusWin->refresh();
         input->refresh();
@@ -50,6 +53,8 @@ int ChatClient::start() {
         input->getStr(strIn);
 
         status = processInput(strIn);
+
+        //main->log("walker", strIn);
     }
 
     return status;
@@ -92,7 +97,7 @@ int ChatClient::connect(const vector<string> &args) {
         }
     }
 
-    char msg[1024];
+    char msg[100];
     sprintf(msg, "Connecting to %s %d...", host.c_str(), port);
     statusWin->addStr(0, 0, msg);
 
@@ -127,6 +132,15 @@ int ChatClient::tell(const vector<string> &args) {
         term.getStatusWindow()->error("You are not connected to a server");
         return STATUS_OK;
     }
+}
+
+int ChatClient::list(const vector<string> &args) {
+    if (conn != nullptr) {
+        conn->requestList();
+    } else {
+        term.getStatusWindow()->error("You are not connected to a server");
+    }
+    return STATUS_OK;
 }
 
 ///

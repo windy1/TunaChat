@@ -78,6 +78,8 @@ public:
      */
     int tell(const vector<string> &args);
 
+    int list(const vector<string> &args);
+
     /**
      * Returns the Terminal interface for this client.
      *

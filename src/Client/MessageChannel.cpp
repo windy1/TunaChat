@@ -15,37 +15,35 @@ using std::stringstream;
 MessageChannel::MessageChannel(ServerConn &conn) : conn(conn), th(thread(&MessageChannel::start, this)) {}
 
 int MessageChannel::start() {
-    while (status != STATUS_CLOSED) {
-        Terminal &term = conn.getClient().getTerminal();
-        term.getMainWindow()->log("DEGUG2");
+    Terminal &term = conn.getClient().getTerminal();
+    MainPtr main = term.getMainWindow();
+    StatusPtr st = term.getStatusWindow();
 
+    string header;
+    string body1;
+    string body2;
+
+    while (status != STATUS_CLOSED) {
         string data;
         readLine(data, conn.getSocket(), conn.getBufferSize());
 
-        term.getMainWindow()->log("DEGUG3");
-
-        string header;
-        string body1;
-        string body2;
-
-        StatusPtr st = term.getStatusWindow();
-
-        if (!parse3(data, header, body1, body2) && !parse2(data, header, body1)) {
-            char err[100];
-            sprintf(err, "Received bad data from server [%s]", data.c_str());
-            st->error(err);
-            continue;
+        if (!parse3(data, header, body1, body2)) {
+            parse2(data, header, body1);
         }
 
         if (header == PROTO_FROM) {
-            term.getMainWindow()->log("message got");
-            term.getMainWindow()->log(body1, body2);
+            main->log(body1, body2);
         } else if (header == PROTO_SIGNOFF) {
-
+            char str[100];
+            sprintf(str, "%s has signed off", body1.c_str());
+            main->log(str);
         } else {
-            char err[100];
-            sprintf(err, "Received unknown header from server [%s]", header.c_str());
-            st->error(err);
+//            stringstream in(data);
+//            string user;
+//            main->log("Online users:");
+//            while (getline(in, user, ',')) {
+//                main->log("  * " + user);
+//            }
         }
     }
     return status;

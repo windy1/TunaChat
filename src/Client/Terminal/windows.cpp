@@ -32,16 +32,23 @@ MainWindow::MainWindow(Terminal &term) :
 }
 
 void MainWindow::log(const string &text) {
-    if (!logText.empty()) logText += '\n';
-    logText += text;
-    clear();
-    addStr(rows - 1, 0, logText);
+    logQueue.push(text);
 }
 
 void MainWindow::log(const string &user, const string &text) {
-    char str[100];
+    char str[1024];
     sprintf(str, "<%s> %s", user.c_str(), text.c_str());
     log(str);
+}
+
+void MainWindow::flush() {
+    while (!logQueue.empty()) {
+        if (!logText.empty()) logText += '\n';
+        logText += logQueue.front();
+        logQueue.pop();
+        clear();
+        addStr(rows - 1, 0, logText);
+    }
 }
 
 ///

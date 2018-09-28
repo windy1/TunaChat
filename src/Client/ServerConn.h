@@ -66,6 +66,8 @@ public:
      */
     int sendMessage(const string &user, const string &text);
 
+    int requestList();
+
     /**
      * Returns the ChatClient associated with this connection.
      *

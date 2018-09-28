@@ -41,8 +41,6 @@ int ServerConn::authenticate(const string &user, const string &pwd) {
         st->addStr(0, 0, "Successfully authenticated as " + user);
         client.getTerminal().getInputWindow()->setTag(user);
 
-        client.getTerminal().getMainWindow()->log("DEBUG");
-
         msgChan = make_shared<MessageChannel>(*this);
 
         return STATUS_OK;
@@ -58,6 +56,13 @@ int ServerConn::authenticate(const string &user, const string &pwd) {
 int ServerConn::sendMessage(const string &user, const string &text) {
     char req[1024];
     sprintf(req, "%s:%s:%s", PROTO_TO, user.c_str(), text.c_str());
+    send(socket, req, strlen(req), 0);
+    return STATUS_OK;
+}
+
+int ServerConn::requestList() {
+    char req[strlen(PROTO_LIST + 1)];
+    sprintf(req, "%s\n", PROTO_LIST);
     send(socket, req, strlen(req), 0);
     return STATUS_OK;
 }

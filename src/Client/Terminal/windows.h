@@ -7,8 +7,10 @@
 
 #include "Window.h"
 #include <vector>
+#include <queue>
 
 using std::vector;
+using std::queue;
 
 class StatusWindow : public Window {
 public:
@@ -29,6 +31,7 @@ public:
 class MainWindow : public Window {
 
     string logText;
+    queue<string> logQueue;
 
 public:
 
@@ -37,6 +40,8 @@ public:
     void log(const string &text);
 
     void log(const string &user, const string &text);
+
+    void flush();
 
 };
 
