@@ -66,6 +66,12 @@ public:
      */
     int sendMessage(const string &user, const string &text);
 
+    /**
+     * Sends the server a request to print out the current user list. This user list will be received on the active
+     * MessageChannel.
+     *
+     * @return status code
+     */
     int requestList();
 
     /**
@@ -75,6 +81,11 @@ public:
      */
     ChatClient& getClient() const;
 
+    /**
+     * Returns the currently active MessageChannel. If the client has not been authenticated, this will be null.
+     *
+     * @return currently active MessageChannel
+     */
     MsgChanPtr getMessageChannel() const;
 
     /**

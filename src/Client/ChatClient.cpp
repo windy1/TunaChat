@@ -87,7 +87,7 @@ int ChatClient::connect(const vector<string> &args) {
         host = "127.0.0.1";
     }
 
-    int port = 12000;
+    int port = DEFAULT_PORT;
     if (args.size() > 1) {
         try {
             port = stoi(args[1]);

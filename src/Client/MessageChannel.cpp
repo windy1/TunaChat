@@ -12,7 +12,15 @@
 
 using std::stringstream;
 
+///
+/// == MessageChannel ==
+///
+
 MessageChannel::MessageChannel(ServerConn &conn) : conn(conn), th(thread(&MessageChannel::start, this)) {}
+
+///
+/// == Methods ==
+///
 
 int MessageChannel::start() {
     Terminal &term = conn.getClient().getTerminal();
@@ -48,6 +56,10 @@ int MessageChannel::start() {
     }
     return status;
 }
+
+///
+/// == Getters ==
+///
 
 ServerConn& MessageChannel::getConnection() const {
     return conn;

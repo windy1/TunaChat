@@ -21,6 +21,8 @@ typedef shared_ptr<ServerConn> ServerConnPtr;
 
 class ChatClient {
 
+    static const int DEFAULT_PORT = 12000;
+
     Terminal term;
     int status = STATUS_OK;
     vector<CmdPtr> commands;
@@ -78,6 +80,12 @@ public:
      */
     int tell(const vector<string> &args);
 
+    /**
+     * Sends a request to the server to send back the user list.
+     *
+     * @param args command line arguments
+     * @return status code
+     */
     int list(const vector<string> &args);
 
     /**
