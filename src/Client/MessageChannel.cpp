@@ -23,9 +23,11 @@ MessageChannel::MessageChannel(ServerConn &conn) : conn(conn), th(thread(&Messag
 ///
 
 int MessageChannel::start() {
-    Terminal &term = conn.getClient().getTerminal();
+    ChatClient &client = conn.getClient();
+    Terminal &term = client.getTerminal();
     MainPtr main = term.getMainWindow();
     StatusPtr st = term.getStatusWindow();
+    InputPtr input = term.getInputWindow();
 
     string header;
     string body1;
@@ -34,6 +36,8 @@ int MessageChannel::start() {
     while (status != STATUS_CLOSED) {
         string data;
         readLine(data, conn.getSocket(), conn.getBufferSize());
+
+        main->debug(header);
 
         if (!parse3(data, header, body1, body2)) {
             parse2(data, header, body1);
@@ -45,13 +49,23 @@ int MessageChannel::start() {
             char str[100];
             sprintf(str, "%s has signed off", body1.c_str());
             main->log(str);
+        } else if (header == PROTO_SIGNIN) {
+            char str[100];
+            sprintf(str, "%s has signed in", body1.c_str());
+            main->log(str);
         } else {
-//            stringstream in(data);
-//            string user;
-//            main->log("Online users:");
-//            while (getline(in, user, ',')) {
-//                main->log("  * " + user);
-//            }
+            stringstream in(data);
+            string user;
+            main->log("Online users:");
+            while (getline(in, user, ',')) {
+                main->log("  * " + user);
+            }
+        }
+
+        if (client.isWaiting()) {
+            main->flush();
+            main->refresh();
+            input->refresh();
         }
     }
     return status;

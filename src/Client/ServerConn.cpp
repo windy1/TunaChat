@@ -34,11 +34,14 @@ int ServerConn::authenticate(const string &user, const string &pwd) {
     string res;
     getResponse(string(authStr), res);
 
+    client.getTerminal().getMainWindow()->debug(res);
+
     StatusPtr st = client.getTerminal().getStatusWindow();
     if (strcmp(res.c_str(), PROTO_AUTHYES) == 0) {
         authenticated = true;
-        st->clear();
-        st->addStr(0, 0, "Successfully authenticated as " + user);
+        char str[500];
+        sprintf(str, "Successfully authenticated as %s [%s]", user.c_str(), host.c_str());
+        st->set(str);
         client.getTerminal().getInputWindow()->setTag(user);
 
         msgChan = make_shared<MessageChannel>(*this);
@@ -131,8 +134,7 @@ int ServerConn::init() {
         return STATUS_BAD_CONNECT;
     }
 
-    statusWin->clear();
-    statusWin->addStr(0, 0, "Connected; authenticate with /auth <user> <pass>");
+    statusWin->set("Connected; authenticate with /auth <user> <pass>");
 
     term.getInputWindow()->setTag(host);
 

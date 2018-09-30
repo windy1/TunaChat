@@ -67,6 +67,7 @@ UserPtr ChatServer::authenticate(const string &user, const string &pwd) {
 
     // notify others
     for (auto &u : userList) {
+        if (u == usr) continue;
         for (auto &conn : u->getConnections()) {
             conn->hello(usr);
         }

@@ -37,24 +37,21 @@ int ChatClient::start() {
     main->refresh();
 
     while (status != STATUS_CLOSED) {
-        input->clear();
-        input->divider();
-        input->tag();
-
         statusWin->divider();
+        statusWin->refresh();
 
         main->flush();
-
         main->refresh();
-        statusWin->refresh();
+
+        input->reset();
         input->refresh();
 
+        waiting = true;
         string strIn;
         input->getStr(strIn);
+        waiting = false;
 
         status = processInput(strIn);
-
-        //main->log("walker", strIn);
     }
 
     return status;
@@ -99,7 +96,7 @@ int ChatClient::connect(const vector<string> &args) {
 
     char msg[100];
     sprintf(msg, "Connecting to %s %d...", host.c_str(), port);
-    statusWin->addStr(0, 0, msg);
+    statusWin->set(msg);
 
     conn = make_shared<ServerConn>(*this, host, port);
 
@@ -146,6 +143,10 @@ int ChatClient::list(const vector<string> &args) {
 ///
 /// == Getters ==
 ///
+
+bool ChatClient::isWaiting() {
+    return waiting;
+}
 
 Terminal& ChatClient::getTerminal() const {
     return (Terminal&) term;

@@ -19,6 +19,8 @@ public:
 
     void divider();
 
+    void set(const string &text);
+
     /**
      * Clears the window and adds the specified error.
      *
@@ -37,6 +39,8 @@ public:
 
     explicit MainWindow(Terminal &term);
 
+    void debug(const string &text);
+
     void log(const string &text);
 
     void log(const string &user, const string &text);
@@ -52,6 +56,8 @@ class InputWindow : public Window {
 public:
 
     explicit InputWindow(Terminal &term);
+
+    void reset();
 
     void divider();
 

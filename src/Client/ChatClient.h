@@ -27,6 +27,7 @@ class ChatClient {
     int status = STATUS_OK;
     vector<CmdPtr> commands;
     ServerConnPtr conn;
+    bool waiting = false;
 
 public:
 
@@ -87,6 +88,8 @@ public:
      * @return status code
      */
     int list(const vector<string> &args);
+
+    bool isWaiting();
 
     /**
      * Returns the Terminal interface for this client.

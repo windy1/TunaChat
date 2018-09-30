@@ -15,6 +15,11 @@ void StatusWindow::divider() {
     drawDivider("\u2550", 1, 0);
 }
 
+void StatusWindow::set(const string &text) {
+    clear();
+    addStr(0, 0, text);
+}
+
 void StatusWindow::error(const string &err) {
     clear();
     colorOn(COLOR_PAIR_ERROR);
@@ -29,6 +34,10 @@ void StatusWindow::error(const string &err) {
 MainWindow::MainWindow(Terminal &term) :
         Window(term, term.getRows() - 4, term.getColumns() - 2, 2, 1) {
     scrollOk(true);
+}
+
+void MainWindow::debug(const string &text) {
+    logQueue.push("[debug] " + text);
 }
 
 void MainWindow::log(const string &text) {
@@ -56,6 +65,12 @@ void MainWindow::flush() {
 ///
 
 InputWindow::InputWindow(Terminal &term) : Window(term, 2, term.getColumns(), term.getRows() - 2, 0), tagStr("TunaChat") {}
+
+void InputWindow::reset() {
+    clear();
+    divider();
+    tag();
+}
 
 void InputWindow::divider() {
     drawDivider("\u2550", 0, 0);
