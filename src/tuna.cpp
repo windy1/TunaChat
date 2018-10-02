@@ -18,8 +18,6 @@ using std::ifstream;
 int tuna::readLine(string &data, int socket, int bufferSize) {
     char buffer[bufferSize];
     ssize_t readSize = recv(socket, buffer, (size_t) bufferSize, 0);
-//    stringstream in(buffer);
-//    getline(in, data);
     data = buffer;
     data = data.substr(0, data.size() - 1);
     printf("buffer = %s\n", buffer);
@@ -32,11 +30,9 @@ bool tuna::parse3(const string &str, string &header, string &body1, string &body
     if (sep1 == string::npos || sep2 == string::npos || sep1 == sep2) {
         return false;
     }
-
     header = str.substr(0, sep1);
     body1 = str.substr(sep1 + 1, sep2 - header.size() - 1);
     body2 = str.substr(sep2 + 1, string::npos);
-
     return true;
 }
 
@@ -45,10 +41,8 @@ bool tuna::parse2(const string &str, string &header, string &body) {
     if (sep == string::npos || sep == 0 || sep == str.size() - 1) {
         return false;
     }
-
     header = str.substr(0, sep);
     body = str.substr(sep + 1, string::npos);
-
     return true;
 }
 

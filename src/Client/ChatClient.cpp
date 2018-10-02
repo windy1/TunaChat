@@ -42,9 +42,6 @@ int ChatClient::start() {
     InputPtr input = term.getInputWindow();
     CenterPtr center = term.getCenterWindow();
 
-    //int y = main->printFile(TITLE_FILE, *st);
-    //main->printFile(HELP_FILE, *st, y);
-
     main->refresh();
 
     int y = center->printFile(TITLE_FILE, *st, 0);

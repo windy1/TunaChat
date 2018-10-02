@@ -96,6 +96,11 @@ public:
      */
     bool isAuthenticated() const;
 
+    /**
+     * Returns the currently authenticated user name, empty if none.
+     *
+     * @return user name of currently authenticated user
+     */
     const string& getUser() const;
 
     /**

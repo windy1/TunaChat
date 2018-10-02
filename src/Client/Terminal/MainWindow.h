@@ -16,16 +16,39 @@ public:
 
     explicit MainWindow(Terminal &term);
 
+    /**
+     * Prints a debug message to the console.
+     *
+     * @param text to print
+     */
     void debug(const string &text);
 
+    /**
+     * Prints a message to the console.
+     *
+     * @param text
+     */
     void log(const string &text);
 
+    /**
+     * Prints a message to the console from the specified user.
+     *
+     * @param user sending message
+     * @param text message text
+     */
     void log(const string &user, const string &text);
 
+    /**
+     * Flushes the log queue, clears, and adds the text to the screen.
+     */
     void flush();
 
-    int printFile(const string &fileName, StatusWindow &st, int y=0);
-
+    /**
+     * Prints the contents of the specified file to the console.
+     *
+     * @param fileName file name to print contents of
+     * @param st status window
+     */
     void logFile(const string &fileName, StatusWindow &st);
 
 };

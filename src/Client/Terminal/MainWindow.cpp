@@ -17,6 +17,10 @@ MainWindow::MainWindow(Terminal &term) :
     scrollOk(true);
 }
 
+///
+/// == Methods ==
+///
+
 void MainWindow::debug(const string &text) {
     logQueue.push("[debug] " + text);
 }
@@ -39,17 +43,6 @@ void MainWindow::flush() {
         clear();
         addStr(rows - 1, 0, logText);
     }
-}
-
-int MainWindow::printFile(const string &fileName, StatusWindow &st, int y) {
-    auto f = [&](const string &ln) {
-        addStr(y, 0, ln);
-        y++;
-    };
-    if (!tuna::fileFeed(fileName, f)) {
-        st.error("Could not open file: " + fileName);
-    }
-    return y;
 }
 
 void MainWindow::logFile(const string &fileName, StatusWindow &st) {

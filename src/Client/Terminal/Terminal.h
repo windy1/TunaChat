@@ -62,6 +62,11 @@ public:
      */
     StatusPtr getStatusWindow() const;
 
+    /**
+     * Returns the window in the middle of the Terminal that displays the welcome message.
+     *
+     * @return center window
+     */
     CenterPtr getCenterWindow() const;
 
     /**

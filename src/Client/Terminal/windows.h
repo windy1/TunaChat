@@ -20,14 +20,7 @@ public:
     explicit StatusWindow(Terminal &term);
 
     void divider();
-
     void set(const string &text);
-
-    /**
-     * Clears the window and adds the specified error.
-     *
-     * @param err error to set
-     */
     void error(const string &err);
 
 };
@@ -41,13 +34,10 @@ public:
     explicit InputWindow(Terminal &term);
 
     void reset();
-
     void divider();
-
     void tag();
 
     void setTag(const string &tag);
-
     const string& getTag() const;
 
 };
@@ -58,7 +48,7 @@ class CenterWindow : public Window {
 
 public:
 
-    CenterWindow(Terminal &term);
+    explicit CenterWindow(Terminal &term);
 
     int printFile(const string &fileName, StatusWindow &st, int y);
 
