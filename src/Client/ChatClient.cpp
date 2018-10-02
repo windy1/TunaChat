@@ -7,13 +7,18 @@
 #include "ServerConn.h"
 #include "Command.h"
 #include <sstream>
+#include <fstream>
 
 using std::stringstream;
 using std::make_shared;
+using std::ifstream;
 
 ///
 /// == ChatClient ==
 ///
+
+const string ChatClient::TITLE_FILE = "files/title.txt";
+const string ChatClient::HELP_FILE = "files/help.txt";
 
 ChatClient::ChatClient() {
     commands = {
@@ -21,7 +26,8 @@ ChatClient::ChatClient() {
         make_shared<Command>(this, "connect", &ChatClient::connect, "Usage: /connect <host> [port]", 2, 1),
         make_shared<Command>(this, "auth", &ChatClient::authenticate, "Usage: /auth <user> <pass>", 2, 2),
         make_shared<Command>(this, "tell", &ChatClient::tell, "Usage: /tell <user> <message>", -1, 2),
-        make_shared<Command>(this, "list", &ChatClient::list, "Usage: /list")
+        make_shared<Command>(this, "list", &ChatClient::list, "Usage: /list"),
+        make_shared<Command>(this, "help", &ChatClient::help, "Usage: /help")
     };
 }
 
@@ -33,6 +39,9 @@ int ChatClient::start() {
     MainPtr main = term.getMainWindow();
     StatusPtr statusWin = term.getStatusWindow();
     InputPtr input = term.getInputWindow();
+
+    int y = main->printFile(TITLE_FILE, *statusWin);
+    main->printFile(HELP_FILE, *statusWin, y);
 
     main->refresh();
 
@@ -137,6 +146,11 @@ int ChatClient::list(const vector<string> &args) {
     } else {
         term.getStatusWindow()->error("You are not connected to a server");
     }
+    return STATUS_OK;
+}
+
+int ChatClient::help(const vector<string> &args) {
+    term.getMainWindow()->logFile(HELP_FILE, *term.getStatusWindow());
     return STATUS_OK;
 }
 

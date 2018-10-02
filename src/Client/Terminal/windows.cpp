@@ -4,6 +4,9 @@
 
 #include "windows.h"
 #include "Terminal.h"
+#include <fstream>
+
+using std::ifstream;
 
 ///
 /// == StatusWindow ==
@@ -58,6 +61,33 @@ void MainWindow::flush() {
         clear();
         addStr(rows - 1, 0, logText);
     }
+}
+
+int MainWindow::printFile(const string &fileName, StatusWindow &st, int y) {
+    withFile(fileName, st, [&](const string &ln) {
+        addStr(y, 0, ln);
+        y++;
+    });
+    return y;
+}
+
+void MainWindow::logFile(const string &fileName, StatusWindow &st) {
+    withFile(fileName, st, [&](const string &ln) {
+        log(ln);
+    });
+}
+
+bool MainWindow::withFile(const string &fileName, StatusWindow &st, function<void (const string &ln)> f) {
+    ifstream in(fileName);
+    if (!in) {
+        st.error("Could not open file: " + fileName);
+        return false;
+    }
+    string ln;
+    while (getline(in, ln)) {
+        f(ln);
+    }
+    return true;
 }
 
 ///

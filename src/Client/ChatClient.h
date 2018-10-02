@@ -22,6 +22,8 @@ typedef shared_ptr<ServerConn> ServerConnPtr;
 class ChatClient {
 
     static const int DEFAULT_PORT = 12000;
+    static const string TITLE_FILE;
+    static const string HELP_FILE;
 
     Terminal term;
     int status = STATUS_OK;
@@ -88,6 +90,8 @@ public:
      * @return status code
      */
     int list(const vector<string> &args);
+
+    int help(const vector<string> &args);
 
     bool isWaiting();
 

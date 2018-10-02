@@ -1,0 +1,7 @@
+Available commands:
+  * /quit                   - Stops the client
+  * /connect <host> [port]  - Connects to a chat server
+  * /auth <user> <pass>     - Authenticates with the server
+  * /tell <user> <text>     - Sends a message
+  * /list                   - Lists users currently online
+  * /help                   - Lists available commands
