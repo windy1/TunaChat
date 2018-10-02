@@ -4,6 +4,7 @@
 
 #include "Terminal.h"
 #include "windows.h"
+#include "MainWindow.h"
 #include <locale.h>
 
 using std::make_shared;
@@ -17,6 +18,7 @@ Terminal::Terminal() {
     main = make_shared<MainWindow>(*this);
     status = make_shared<StatusWindow>(*this);
     input = make_shared<InputWindow>(*this);
+    center = make_shared<CenterWindow>(*this);
 }
 
 Terminal::~Terminal() {
@@ -37,6 +39,10 @@ InputPtr Terminal::getInputWindow() const {
 
 StatusPtr Terminal::getStatusWindow() const {
     return status;
+}
+
+CenterPtr Terminal::getCenterWindow() const {
+    return center;
 }
 
 int Terminal::getRows() const {

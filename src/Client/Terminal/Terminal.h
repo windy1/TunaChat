@@ -13,16 +13,19 @@ using std::shared_ptr;
 class MainWindow;
 class InputWindow;
 class StatusWindow;
+class CenterWindow;
 
 typedef shared_ptr<MainWindow> MainPtr;
 typedef shared_ptr<InputWindow> InputPtr;
 typedef shared_ptr<StatusWindow> StatusPtr;
+typedef shared_ptr<CenterWindow> CenterPtr;
 
 class Terminal {
 
     MainPtr main;
     InputPtr input;
     StatusPtr status;
+    CenterPtr center;
 
     int rows;
     int columns;
@@ -58,6 +61,8 @@ public:
      * @return status window
      */
     StatusPtr getStatusWindow() const;
+
+    CenterPtr getCenterWindow() const;
 
     /**
      * Returns the total rows on the screen.

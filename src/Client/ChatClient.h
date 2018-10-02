@@ -91,8 +91,20 @@ public:
      */
     int list(const vector<string> &args);
 
+    /**
+     * Prints the help file.
+     *
+     * @param args command line arguments
+     * @return status code
+     */
     int help(const vector<string> &args);
 
+    /**
+     * Returns true if the client (main thread) is currently waiting for user input. This method is used to ensure there
+     * are no concurrent modifications to the Terminal.
+     *
+     * @return true if client is waiting for user input
+     */
     bool isWaiting();
 
     /**

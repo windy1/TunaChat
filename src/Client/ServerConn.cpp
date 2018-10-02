@@ -4,6 +4,7 @@
 
 #include "ServerConn.h"
 #include "Terminal/windows.h"
+#include "Terminal/MainWindow.h"
 #include "MessageChannel.h"
 #include <netinet/in.h>
 #include <sys/socket.h>
@@ -43,9 +44,8 @@ int ServerConn::authenticate(const string &user, const string &pwd) {
         sprintf(str, "Successfully authenticated as %s [%s]", user.c_str(), host.c_str());
         st->set(str);
         client.getTerminal().getInputWindow()->setTag(user);
-
         msgChan = make_shared<MessageChannel>(*this);
-
+        this->user = user;
         return STATUS_OK;
     } else if (strcmp(res.c_str(), PROTO_AUTHNO) == 0) {
         st->error("Invalid username or password");
@@ -59,6 +59,7 @@ int ServerConn::authenticate(const string &user, const string &pwd) {
 int ServerConn::sendMessage(const string &user, const string &text) {
     char req[1024];
     sprintf(req, "%s:%s:%s", PROTO_TO, user.c_str(), text.c_str());
+    client.getTerminal().getMainWindow()->debug(req);
     send(socket, req, strlen(req), 0);
     return STATUS_OK;
 }
@@ -84,6 +85,10 @@ MsgChanPtr ServerConn::getMessageChannel() const {
 
 bool ServerConn::isAuthenticated() const {
     return authenticated;
+}
+
+const string& ServerConn::getUser() const {
+    return user;
 }
 
 const string& ServerConn::getHost() const {
@@ -125,8 +130,13 @@ int ServerConn::init() {
     addr.sin_port = htons(port);
 
     if (inet_pton(AF_INET, host.c_str(), &addr.sin_addr) <= 0) {
-        statusWin->error("Invalid host name.");
-        return STATUS_INVALID_ARG;
+        // try name lookup
+        string ip;
+        tuna::host2ip(host, ip);
+        if (inet_pton(AF_INET, ip.c_str(), &addr.sin_addr) <= 0) {
+            statusWin->error("Invalid host name.");
+            return STATUS_INVALID_ARG;
+        }
     }
 
     if (::connect(socket, (sockaddr*) &addr, sizeof(addr)) < 0) {

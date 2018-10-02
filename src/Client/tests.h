@@ -9,4 +9,6 @@ int runTests();
 
 bool test_ChatClient_parseArgs();
 
+bool test_host2ip();
+
 #endif //TUNACHAT_TESTS_H

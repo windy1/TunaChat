@@ -4,6 +4,7 @@
 
 #include "MessageChannel.h"
 #include "Terminal/windows.h"
+#include "Terminal/MainWindow.h"
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -33,14 +34,22 @@ int MessageChannel::start() {
     string body1;
     string body2;
 
+    main->log("You have joined the server.");
+
     while (status != STATUS_CLOSED) {
+        if (client.isWaiting()) {
+            main->flush();
+            main->refresh();
+            input->refresh();
+        }
+
         string data;
-        readLine(data, conn.getSocket(), conn.getBufferSize());
+        tuna::readLine(data, conn.getSocket(), conn.getBufferSize());
 
-        main->debug(header);
+        //main->debug(header);
 
-        if (!parse3(data, header, body1, body2)) {
-            parse2(data, header, body1);
+        if (!tuna::parse3(data, header, body1, body2)) {
+            tuna::parse2(data, header, body1);
         }
 
         if (header == PROTO_FROM) {
@@ -60,12 +69,6 @@ int MessageChannel::start() {
             while (getline(in, user, ',')) {
                 main->log("  * " + user);
             }
-        }
-
-        if (client.isWaiting()) {
-            main->flush();
-            main->refresh();
-            input->refresh();
         }
     }
     return status;

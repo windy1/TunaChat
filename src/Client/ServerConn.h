@@ -20,6 +20,7 @@ class ServerConn {
     int socket;
     int bufferSize;
     bool authenticated = false;
+    string user;
     int status = STATUS_CLOSED;
 
     /**
@@ -94,6 +95,8 @@ public:
      * @return true if authenticated
      */
     bool isAuthenticated() const;
+
+    const string& getUser() const;
 
     /**
      * Returns the host of this connection.

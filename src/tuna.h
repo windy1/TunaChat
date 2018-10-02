@@ -34,11 +34,20 @@
 
 #include <string>
 #include <vector>
+#include <functional>
 
-int readLine(std::string &data, int socket, int bufferSize);
+namespace tuna {
 
-bool parse3(const std::string &str, std::string &header, std::string &body1, std::string &body2);
+    int readLine(std::string &data, int socket, int bufferSize);
 
-bool parse2(const std::string &str, std::string &header, std::string &body);
+    bool parse3(const std::string &str, std::string &header, std::string &body1, std::string &body2);
+
+    bool parse2(const std::string &str, std::string &header, std::string &body);
+
+    bool host2ip(const std::string &name, std::string &ip);
+
+    bool fileFeed(const std::string &fileName, const std::function<void (const std::string &ln)> &f);
+
+}
 
 #endif //TUNACHAT_TUNA_H

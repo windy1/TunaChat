@@ -55,7 +55,7 @@ bool ClientConn::authenticate() {
     string header;
     string user;
     string pwd;
-    if (!parse3(*authLine, header, user, pwd)) {
+    if (!tuna::parse3(*authLine, header, user, pwd)) {
         close("AUTH_LINE_FORMAT", STATUS_BAD_REQUEST);
         return false;
     }
@@ -95,10 +95,13 @@ void ClientConn::processCommand() {
         string header;
         string usr;
         string text;
-        if (!parse3(*cmd, header, usr, text)) {
+        if (!tuna::parse3(*cmd, header, usr, text)) {
             close("INVALID_COMMAND", STATUS_BAD_REQUEST);
             return;
         }
+
+        printf("cmd = %s\n", cmd->c_str());
+        printf("text = %s\n", text.c_str());
 
         if (strcmp(header.c_str(), PROTO_TO) != 0) {
             close("INVALID_COMMAND", STATUS_BAD_REQUEST);
@@ -192,7 +195,8 @@ thread& ClientConn::getThread() {
 
 const string* ClientConn::readLine() {
     string data;
-    int readSize = ::readLine(data, socket, server.getBufferSize());
+    int readSize = tuna::readLine(data, socket, server.getBufferSize());
+    printf("data = %s\n", data.c_str());
 
     if (status == STATUS_SHUTDOWN) {
         // check for shutdown signal that may have been set async while waiting for recv

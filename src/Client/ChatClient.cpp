@@ -4,6 +4,7 @@
 
 #include "ChatClient.h"
 #include "Terminal/windows.h"
+#include "Terminal/MainWindow.h"
 #include "ServerConn.h"
 #include "Command.h"
 #include <sstream>
@@ -37,17 +38,22 @@ ChatClient::ChatClient() {
 
 int ChatClient::start() {
     MainPtr main = term.getMainWindow();
-    StatusPtr statusWin = term.getStatusWindow();
+    StatusPtr st = term.getStatusWindow();
     InputPtr input = term.getInputWindow();
+    CenterPtr center = term.getCenterWindow();
 
-    int y = main->printFile(TITLE_FILE, *statusWin);
-    main->printFile(HELP_FILE, *statusWin, y);
+    //int y = main->printFile(TITLE_FILE, *st);
+    //main->printFile(HELP_FILE, *st, y);
 
     main->refresh();
 
+    int y = center->printFile(TITLE_FILE, *st, 0);
+    center->printFile(HELP_FILE, *st, y);
+    center->refresh();
+
     while (status != STATUS_CLOSED) {
-        statusWin->divider();
-        statusWin->refresh();
+        st->divider();
+        st->refresh();
 
         main->flush();
         main->refresh();
@@ -87,12 +93,7 @@ int ChatClient::quit(const vector<string> &args) {
 
 int ChatClient::connect(const vector<string> &args) {
     StatusPtr statusWin = term.getStatusWindow();
-
     string host = args[0];
-    if (host == "localhost") {
-        host = "127.0.0.1";
-    }
-
     int port = DEFAULT_PORT;
     if (args.size() > 1) {
         try {
@@ -131,11 +132,20 @@ int ChatClient::tell(const vector<string> &args) {
         msg += args[i];
         if (i < args.size() - 1) msg += ' ';
     }
+
+    StatusPtr st = term.getStatusWindow();
     if (conn != nullptr) {
+        if (conn->getUser().empty()) {
+            st->error("You are not authenticated with the server.");
+            return STATUS_OK;
+        }
         conn->sendMessage(user, msg);
+        char logText[1024];
+        sprintf(logText, "<%s> [@%s] %s", conn->getUser().c_str(), user.c_str(), msg.c_str());
+        term.getMainWindow()->log(logText);
         return STATUS_OK;
     } else {
-        term.getStatusWindow()->error("You are not connected to a server");
+        st->error("You are not connected to a server");
         return STATUS_OK;
     }
 }

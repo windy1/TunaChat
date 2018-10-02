@@ -32,31 +32,6 @@ public:
 
 };
 
-class MainWindow : public Window {
-
-    string logText;
-    queue<string> logQueue;
-
-    bool withFile(const string &fileName, StatusWindow &st, function<void (const string &ln)> f);
-
-public:
-
-    explicit MainWindow(Terminal &term);
-
-    void debug(const string &text);
-
-    void log(const string &text);
-
-    void log(const string &user, const string &text);
-
-    void flush();
-
-    int printFile(const string &fileName, StatusWindow &st, int y=0);
-
-    void logFile(const string &fileName, StatusWindow &st);
-
-};
-
 class InputWindow : public Window {
 
     string tagStr;
@@ -74,6 +49,18 @@ public:
     void setTag(const string &tag);
 
     const string& getTag() const;
+
+};
+
+class CenterWindow : public Window {
+
+    int padding = 1;
+
+public:
+
+    CenterWindow(Terminal &term);
+
+    int printFile(const string &fileName, StatusWindow &st, int y);
 
 };
 

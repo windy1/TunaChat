@@ -9,6 +9,7 @@
 int runTests() {
     int failed = 0;
     if (!test_ChatClient_parseArgs()) failed++;
+    if (!test_host2ip()) failed++;
     return failed;
 }
 
@@ -18,4 +19,13 @@ bool test_ChatClient_parseArgs() {
     vector<string> args;
     Command::parseArgs(cmd, args);
     return args[0] == "hello" && args[1] == "world" && args[2] == "foo" && args[3] == "bar";
+}
+
+bool test_host2ip() {
+    printf("== test_host2_ip ==\n");
+    string host = "google.com";
+    string ip;
+    tuna::host2ip(host, ip);
+    printf("ip = %s\n", ip.c_str());
+    return true;
 }
