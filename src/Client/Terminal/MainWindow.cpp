@@ -22,11 +22,11 @@ MainWindow::MainWindow(Terminal &term) :
 ///
 
 void MainWindow::debug(const string &text) {
-    logQueue.push("[debug] " + text);
+    buffer.push("[debug] " + text);
 }
 
 void MainWindow::log(const string &text) {
-    logQueue.push(text);
+    buffer.push(text);
 }
 
 void MainWindow::log(const string &user, const string &text) {
@@ -36,13 +36,17 @@ void MainWindow::log(const string &user, const string &text) {
 }
 
 void MainWindow::flush() {
-    while (!logQueue.empty()) {
+    while (!buffer.empty()) {
         if (!logText.empty()) logText += '\n';
-        logText += logQueue.front();
-        logQueue.pop();
+        logText += buffer.front();
+        buffer.pop();
         clear();
         addStr(rows - 1, 0, logText);
     }
+}
+
+void MainWindow::clearBuffer() {
+    buffer = queue<string>();
 }
 
 void MainWindow::logFile(const string &fileName, StatusWindow &st) {

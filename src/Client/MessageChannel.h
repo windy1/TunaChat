@@ -29,11 +29,25 @@ public:
     int start();
 
     /**
+     * Sends a signal to this message channel that the socket is being shutdown and should not receive any more data.
+     *
+     * @return status code
+     */
+    int shutdown();
+
+    /**
      * Returns the ServerConn associated with this MessageChannel.
      *
      * @return ServerConn of channel
      */
     ServerConn& getConnection() const;
+
+    /**
+     * Returns the thread this message channel is running on.
+     *
+     * @return thread this is running on
+     */
+    thread& getThread() const;
 
     /**
      * Returns this MessageChannel's status code.

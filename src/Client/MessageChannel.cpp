@@ -46,10 +46,18 @@ int MessageChannel::start() {
         string data;
         tuna::readLine(data, conn.getSocket(), conn.getBufferSize());
 
-        //main->debug(header);
+        if (status == STATUS_SHUTDOWN) return status;
 
-        if (!tuna::parse3(data, header, body1, body2)) {
-            tuna::parse2(data, header, body1);
+        main->debug("data = " + data);
+
+        if (!tuna::parse3(data, header, body1, body2) && !tuna::parse2(data, header, body1)) {
+            stringstream in(data);
+            string user;
+            main->log("Online users:");
+            while (getline(in, user, ',')) {
+                main->log("  * " + user);
+            }
+            continue;
         }
 
         if (header == PROTO_FROM) {
@@ -62,16 +70,13 @@ int MessageChannel::start() {
             char str[100];
             sprintf(str, "%s has signed in", body1.c_str());
             main->log(str);
-        } else {
-            stringstream in(data);
-            string user;
-            main->log("Online users:");
-            while (getline(in, user, ',')) {
-                main->log("  * " + user);
-            }
         }
     }
     return status;
+}
+
+int MessageChannel::shutdown() {
+    return status = STATUS_SHUTDOWN;
 }
 
 ///
@@ -80,6 +85,10 @@ int MessageChannel::start() {
 
 ServerConn& MessageChannel::getConnection() const {
     return conn;
+}
+
+thread& MessageChannel::getThread() const {
+    return (thread&) th;
 }
 
 int MessageChannel::getStatus() const {

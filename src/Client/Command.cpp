@@ -5,6 +5,7 @@
 #include "ChatClient.h"
 #include "Command.h"
 #include "Terminal/windows.h"
+#include "ServerConn.h"
 #include <sstream>
 
 using std::stringstream;
@@ -19,13 +20,17 @@ Command::Command(
     CmdExe exe,
     const string &usage,
     int maxArgs,
-    int minArgs) :
+    int minArgs,
+    bool connReq,
+    bool authReq) :
     client(client),
     name(name),
     exe(exe),
     usage(usage),
     maxArgs(maxArgs),
-    minArgs(minArgs) {}
+    minArgs(minArgs),
+    connReq(connReq),
+    authReq(authReq) {}
 
 ///
 /// == Methods ==
@@ -39,11 +44,24 @@ int Command::execute(const vector<string> &args) {
     bool invalid = false;
     if (maxArgs != -1 && args.size() > maxArgs) invalid = true;
     if (minArgs != -1 && args.size() < minArgs) invalid = true;
+
+    StatusPtr statusWin = client->getTerminal().getStatusWindow();
     if (invalid) {
-        StatusPtr statusWin = client->getTerminal().getStatusWindow();
         statusWin->error(usage);
         return STATUS_INVALID_ARG;
     }
+
+    ServerConnPtr conn = client->getConnection();
+    if (connReq && conn == nullptr) {
+        statusWin->error("You are not connected to a server.");
+        return STATUS_INVALID_ARG;
+    }
+
+    if (authReq && conn != nullptr && !conn->isAuthenticated()) {
+        statusWin->error("You are not authenticated with the server.");
+        return STATUS_INVALID_ARG;
+    }
+
     return (client->*exe)(args);
 }
 
@@ -73,6 +91,14 @@ int Command::getMinArgs() const {
 
 const string& Command::getUsage() const {
     return usage;
+}
+
+bool Command::isConnectionRequired() const {
+    return connReq;
+}
+
+bool Command::isAuthenticationRequired() const {
+    return authReq;
 }
 
 ///

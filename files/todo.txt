@@ -1,0 +1,3 @@
+Client does not handle unknown hosts well
+Quit should disconnect if connected to a server
+Tell should not allow you to send a message to yourself

@@ -31,7 +31,7 @@ ServerConn::ServerConn(ChatClient &client, const string &host, int port, int buf
 
 int ServerConn::authenticate(const string &user, const string &pwd) {
     char authStr[1024];
-    sprintf(authStr, "%s:%s:%s", PROTO_AUTH, user.c_str(), pwd.c_str());
+    sprintf(authStr, "%s:%s:%s\n", PROTO_AUTH, user.c_str(), pwd.c_str());
     string res;
     getResponse(string(authStr), res);
 
@@ -46,29 +46,42 @@ int ServerConn::authenticate(const string &user, const string &pwd) {
         client.getTerminal().getInputWindow()->setTag(user);
         msgChan = make_shared<MessageChannel>(*this);
         this->user = user;
-        return STATUS_OK;
+        return status = STATUS_OK;
     } else if (strcmp(res.c_str(), PROTO_AUTHNO) == 0) {
         st->error("Invalid username or password");
-        return STATUS_INVALID_ARG;
+        return status = STATUS_INVALID_ARG;
     } else {
         st->error("An unknown server error occurred");
-        return STATUS_BAD_RESPONSE;
+        return status = STATUS_BAD_RESPONSE;
     }
 }
 
 int ServerConn::sendMessage(const string &user, const string &text) {
     char req[1024];
-    sprintf(req, "%s:%s:%s", PROTO_TO, user.c_str(), text.c_str());
+    sprintf(req, "%s:%s:%s\n", PROTO_TO, user.c_str(), text.c_str());
     client.getTerminal().getMainWindow()->debug(req);
     send(socket, req, strlen(req), 0);
-    return STATUS_OK;
+    return status = STATUS_OK;
 }
 
 int ServerConn::requestList() {
     char req[strlen(PROTO_LIST + 1)];
     sprintf(req, "%s\n", PROTO_LIST);
     send(socket, req, strlen(req), 0);
-    return STATUS_OK;
+    return status = STATUS_OK;
+}
+
+int ServerConn::disconnect() {
+    if (msgChan != nullptr) msgChan->shutdown();
+    shutdown(socket, SHUT_RD);
+    if (msgChan != nullptr) msgChan->getThread().join();
+    msgChan = nullptr;
+    if (authenticated) {
+        char req[strlen(PROTO_BYE) + 1];
+        sprintf(req, "%s\n", PROTO_BYE);
+        send(socket, req, strlen(req), 0);
+    }
+    return status = STATUS_CLOSED;
 }
 
 ///
@@ -153,7 +166,9 @@ int ServerConn::init() {
 
 int ServerConn::sayHello() {
     string res;
-    getResponse(PROTO_HELLO, res);
+    char hello[100];
+    sprintf(hello, "%s\n", PROTO_HELLO);
+    getResponse(hello, res);
     if (strcmp(res.c_str(), PROTO_HELLO) != 0) {
         client.getTerminal().getStatusWindow()->error("Connection refused.");
         return STATUS_BAD_RESPONSE;

@@ -76,6 +76,13 @@ public:
     int requestList();
 
     /**
+     * Closes this connection and signs off if authenticated.
+     *
+     * @return status code
+     */
+    int disconnect();
+
+    /**
      * Returns the ChatClient associated with this connection.
      *
      * @return client instance

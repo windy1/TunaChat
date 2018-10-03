@@ -15,19 +15,24 @@ using std::make_shared;
 using std::ifstream;
 
 ///
-/// == ChatClient ==
+/// == Statics ==
 ///
 
 const string ChatClient::TITLE_FILE = "files/title.txt";
 const string ChatClient::HELP_FILE = "files/help.txt";
 
+///
+/// == ChatClient ==
+///
+
 ChatClient::ChatClient() {
     commands = {
         make_shared<Command>(this, "quit", &ChatClient::quit, "Usage: /quit"),
         make_shared<Command>(this, "connect", &ChatClient::connect, "Usage: /connect <host> [port]", 2, 1),
-        make_shared<Command>(this, "auth", &ChatClient::authenticate, "Usage: /auth <user> <pass>", 2, 2),
-        make_shared<Command>(this, "tell", &ChatClient::tell, "Usage: /tell <user> <message>", -1, 2),
-        make_shared<Command>(this, "list", &ChatClient::list, "Usage: /list"),
+        make_shared<Command>(this, "auth", &ChatClient::authenticate, "Usage: /auth <user> <pass>", 2, 2, true),
+        make_shared<Command>(this, "tell", &ChatClient::tell, "Usage: /tell <user> <message>", -1, 2, true, true),
+        make_shared<Command>(this, "list", &ChatClient::list, "Usage: /list", -1, -1, true, true),
+        make_shared<Command>(this, "disconnect", &ChatClient::disconnect, "Usage: /disconnect", -1, -1, true),
         make_shared<Command>(this, "help", &ChatClient::help, "Usage: /help")
     };
 }
@@ -44,9 +49,7 @@ int ChatClient::start() {
 
     main->refresh();
 
-    int y = center->printFile(TITLE_FILE, *st, 0);
-    center->printFile(HELP_FILE, *st, y);
-    center->refresh();
+    showWelcome();
 
     while (status != STATUS_CLOSED) {
         st->divider();
@@ -113,13 +116,8 @@ int ChatClient::connect(const vector<string> &args) {
 int ChatClient::authenticate(const vector<string> &args) {
     string user = args[0];
     string pwd = args[1];
-    if (conn != nullptr) {
-        conn->authenticate(user, pwd);
-        return STATUS_OK;
-    } else {
-        term.getStatusWindow()->error("You are not connected to a server");
-        return STATUS_OK;
-    }
+    conn->authenticate(user, pwd);
+    return STATUS_OK;
 }
 
 int ChatClient::tell(const vector<string> &args) {
@@ -130,34 +128,31 @@ int ChatClient::tell(const vector<string> &args) {
         if (i < args.size() - 1) msg += ' ';
     }
 
-    StatusPtr st = term.getStatusWindow();
-    if (conn != nullptr) {
-        if (conn->getUser().empty()) {
-            st->error("You are not authenticated with the server.");
-            return STATUS_OK;
-        }
-        conn->sendMessage(user, msg);
-        char logText[1024];
-        sprintf(logText, "<%s> [@%s] %s", conn->getUser().c_str(), user.c_str(), msg.c_str());
-        term.getMainWindow()->log(logText);
-        return STATUS_OK;
-    } else {
-        st->error("You are not connected to a server");
-        return STATUS_OK;
-    }
+    conn->sendMessage(user, msg);
+    char logText[1024];
+    sprintf(logText, "<%s> [@%s] %s", conn->getUser().c_str(), user.c_str(), msg.c_str());
+    term.getMainWindow()->log(logText);
+    return STATUS_OK;
 }
 
 int ChatClient::list(const vector<string> &args) {
-    if (conn != nullptr) {
-        conn->requestList();
-    } else {
-        term.getStatusWindow()->error("You are not connected to a server");
-    }
+    conn->requestList();
     return STATUS_OK;
 }
 
 int ChatClient::help(const vector<string> &args) {
     term.getMainWindow()->logFile(HELP_FILE, *term.getStatusWindow());
+    return STATUS_OK;
+}
+
+int ChatClient::disconnect(const vector<string> &args) {
+    conn->disconnect();
+    conn = nullptr;
+    term.getInputWindow()->setTag(InputWindow::DEFAULT_TAG);
+    term.getStatusWindow()->clear();
+    MainPtr main = term.getMainWindow();
+    main->clearBuffer();
+    main->clear();
     return STATUS_OK;
 }
 
@@ -183,4 +178,16 @@ ServerConnPtr ChatClient::getConnection() const {
 
 int ChatClient::getStatus() const {
     return status;
+}
+
+///
+/// == Private methods ==
+///
+
+void ChatClient::showWelcome() {
+    CenterPtr center = term.getCenterWindow();
+    StatusPtr st = term.getStatusWindow();
+    int y = center->printFile(TITLE_FILE, *st, 0);
+    center->printFile(HELP_FILE, *st, y);
+    center->refresh();
 }

@@ -15,6 +15,7 @@ using std::vector;
 
 class Command;
 class ServerConn;
+struct Err;
 
 typedef shared_ptr<Command> CmdPtr;
 typedef shared_ptr<ServerConn> ServerConnPtr;
@@ -30,6 +31,8 @@ class ChatClient {
     vector<CmdPtr> commands;
     ServerConnPtr conn;
     bool waiting = false;
+
+    void showWelcome();
 
 public:
 
@@ -98,6 +101,14 @@ public:
      * @return status code
      */
     int help(const vector<string> &args);
+
+    /**
+     * Disconnects from the current server, if one.
+     *
+     * @param args command line arguments
+     * @return status code
+     */
+    int disconnect(const vector<string> &args);
 
     /**
      * Returns true if the client (main thread) is currently waiting for user input. This method is used to ensure there

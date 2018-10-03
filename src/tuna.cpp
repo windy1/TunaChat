@@ -18,9 +18,11 @@ using std::ifstream;
 int tuna::readLine(string &data, int socket, int bufferSize) {
     char buffer[bufferSize];
     ssize_t readSize = recv(socket, buffer, (size_t) bufferSize, 0);
-    data = buffer;
-    data = data.substr(0, data.size() - 1);
-    printf("buffer = %s\n", buffer);
+    stringstream in(buffer);
+    getline(in, data);
+    if (data[data.size() - 1] == '\n') {
+        data = data.substr(0, data.size() - 1);
+    }
     return (int) readSize;
 }
 

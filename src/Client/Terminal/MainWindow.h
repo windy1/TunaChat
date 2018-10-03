@@ -10,7 +10,7 @@
 class MainWindow : public Window {
 
     string logText;
-    queue<string> logQueue;
+    queue<string> buffer;
 
 public:
 
@@ -42,6 +42,8 @@ public:
      * Flushes the log queue, clears, and adds the text to the screen.
      */
     void flush();
+
+    void clearBuffer();
 
     /**
      * Prints the contents of the specified file to the console.

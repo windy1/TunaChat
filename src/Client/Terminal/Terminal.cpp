@@ -60,10 +60,10 @@ int Terminal::getColumns() const {
 void Terminal::init() {
     setlocale(LC_ALL, "");
     initscr();
-    nonl();
-    cbreak();
-    intrflush(stdscr, FALSE);
-    keypad(stdscr, TRUE);
+    //nonl();
+    //cbreak();
+    //intrflush(stdscr, FALSE);
+    //keypad(stdscr, TRUE);
     getmaxyx(stdscr, rows, columns);
 
     start_color();

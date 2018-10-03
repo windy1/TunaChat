@@ -9,6 +9,7 @@
 #include <string>
 
 using std::string;
+using std::make_shared;
 
 /**
  * Typedef declaration for ChatClient member function to execute Commands.
@@ -17,12 +18,16 @@ typedef int (ChatClient::*CmdExe)(const vector<string>&);
 
 class Command {
 
+    friend class CommandBuilder;
+
     ChatClient *client;
     string name;
     CmdExe exe;
     int maxArgs;
     int minArgs;
     string usage;
+    bool connReq;
+    bool authReq;
 
 public:
 
@@ -32,7 +37,9 @@ public:
         CmdExe exe,
         const string &usage,
         int maxArgs = -1,
-        int minArgs = -1);
+        int minArgs = -1,
+        bool connReq=false,
+        bool authReq=false);
 
     /**
      * Returns true if the specified full input command matches this command and should be executed.
@@ -91,6 +98,20 @@ public:
      * @return command usage
      */
     const string& getUsage() const;
+
+    /**
+     * Returns true if the client must be connected to a server for this command to execute.
+     *
+     * @return true if connection required
+     */
+    bool isConnectionRequired() const;
+
+    /**
+     * Returns true if the client must be authenticated with a server for this command to execute.
+     *
+     * @return true if auth required
+     */
+    bool isAuthenticationRequired() const;
 
     /**
      * Discards the command name from the specified input and parses all subsequent arguments into a vector.

@@ -196,7 +196,6 @@ thread& ClientConn::getThread() {
 const string* ClientConn::readLine() {
     string data;
     int readSize = tuna::readLine(data, socket, server.getBufferSize());
-    printf("data = %s\n", data.c_str());
 
     if (status == STATUS_SHUTDOWN) {
         // check for shutdown signal that may have been set async while waiting for recv

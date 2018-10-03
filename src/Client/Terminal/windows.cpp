@@ -7,6 +7,7 @@
 #include <fstream>
 
 using std::ifstream;
+using std::to_string;
 
 ///
 /// == StatusWindow ==
@@ -30,11 +31,18 @@ void StatusWindow::error(const string &err) {
     colorOff(COLOR_PAIR_ERROR);
 }
 
+void StatusWindow::error(const Err &err) {
+    error(err.text + " (" + to_string(err.code) + ")");
+}
+
 ///
 /// == InputWindow ==
 ///
 
-InputWindow::InputWindow(Terminal &term) : Window(term, 2, term.getColumns(), term.getRows() - 2, 0), tagStr("TunaChat") {}
+const string InputWindow::DEFAULT_TAG = "TunaChat";
+
+InputWindow::InputWindow(Terminal &term)
+    : Window(term, 2, term.getColumns(), term.getRows() - 2, 0), tagStr(DEFAULT_TAG) {}
 
 void InputWindow::reset() {
     clear();
@@ -63,7 +71,7 @@ const string& InputWindow::getTag() const {
 ///
 
 CenterWindow::CenterWindow(Terminal &term) :
-    Window(term, 20, 62, term.getRows()/2 - 20/2, term.getColumns()/2 - 62/2) {}
+    Window(term, 21, 60, term.getRows()/3 - 21/2, term.getColumns()/2 - 60/2) {}
 
 int CenterWindow::printFile(const string &fileName, StatusWindow &st, int y) {
     auto f = [&](const string &ln) {
