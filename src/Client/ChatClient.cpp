@@ -88,6 +88,10 @@ int ChatClient::processInput(const string &in) {
 ///
 
 int ChatClient::quit(const vector<string> &args) {
+    if (conn != nullptr) {
+        conn->disconnect();
+        conn = nullptr;
+    }
     return STATUS_CLOSED;
 }
 

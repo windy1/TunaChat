@@ -35,7 +35,7 @@ int ServerConn::authenticate(const string &user, const string &pwd) {
     string res;
     getResponse(string(authStr), res);
 
-    client.getTerminal().getMainWindow()->debug(res);
+    //client.getTerminal().getMainWindow()->debug(res);
 
     StatusPtr st = client.getTerminal().getStatusWindow();
     if (strcmp(res.c_str(), PROTO_AUTHYES) == 0) {
@@ -59,7 +59,6 @@ int ServerConn::authenticate(const string &user, const string &pwd) {
 int ServerConn::sendMessage(const string &user, const string &text) {
     char req[1024];
     sprintf(req, "%s:%s:%s\n", PROTO_TO, user.c_str(), text.c_str());
-    client.getTerminal().getMainWindow()->debug(req);
     send(socket, req, strlen(req), 0);
     return status = STATUS_OK;
 }

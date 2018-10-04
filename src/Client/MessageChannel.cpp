@@ -48,7 +48,7 @@ int MessageChannel::start() {
 
         if (status == STATUS_SHUTDOWN) return status;
 
-        main->debug("data = " + data);
+        //main->debug("data = " + data);
 
         if (!tuna::parse3(data, header, body1, body2) && !tuna::parse2(data, header, body1)) {
             stringstream in(data);
