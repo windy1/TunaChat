@@ -131,6 +131,12 @@ int ChatClient::authenticate(const vector<string> &args) {
 int ChatClient::tell(const vector<string> &args) {
     string user = args[0];
     string msg;
+
+    if (user == conn->getUser()) {
+        term.getStatusWindow()->error("You cannot send a message to yourself.");
+        return STATUS_OK;
+    }
+
     for (int i = 1; i < args.size(); i++) {
         msg += args[i];
         if (i < args.size() - 1) msg += ' ';

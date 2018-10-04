@@ -1,2 +1,1 @@
-Client does not handle unknown hosts well
 Tell should not allow you to send a message to yourself
