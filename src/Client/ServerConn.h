@@ -6,6 +6,7 @@
 #define TUNACHAT_SERVERCONN_H
 
 #include "ChatClient.h"
+#include <netinet/in.h>
 
 class MessageChannel;
 
@@ -15,10 +16,13 @@ class ServerConn {
 
     ChatClient &client;
     MsgChanPtr msgChan;
+
     string host;
     int port;
     int socket;
     int bufferSize;
+    int timeout;
+
     bool authenticated = false;
     string user;
     int status = STATUS_CLOSED;
@@ -29,6 +33,14 @@ class ServerConn {
      * @return status code
      */
     int init();
+
+    bool openSocket();
+
+    bool verifyHost(sockaddr_in &addr);
+
+    bool setBlocking(bool blocking);
+
+    int connect(sockaddr_in &addr);
 
     /**
      * Sends the initial "HELLO" to the server and awaits the server's response.
@@ -47,7 +59,7 @@ class ServerConn {
 
 public:
 
-    ServerConn(ChatClient &client, const string &host, int port, int bufferSize=1024);
+    ServerConn(ChatClient &client, const string &host, int port, int bufferSize = 1024, int timeout = 10);
 
     /**
      * Attempts to authenticate with the server using the specified username and password.

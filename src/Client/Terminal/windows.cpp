@@ -31,10 +31,6 @@ void StatusWindow::error(const string &err) {
     colorOff(COLOR_PAIR_ERROR);
 }
 
-void StatusWindow::error(const Err &err) {
-    error(err.text + " (" + to_string(err.code) + ")");
-}
-
 ///
 /// == InputWindow ==
 ///

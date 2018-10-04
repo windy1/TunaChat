@@ -21,6 +21,7 @@
 #define STATUS_UNKNOWN_CMD  401
 #define STATUS_INVALID_ARG  402
 #define STATUS_BAD_CONNECT  403
+#define STATUS_TIMEOUT      408
 
 ///
 /// == Protocol language ==

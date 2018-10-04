@@ -14,8 +14,6 @@ using std::vector;
 using std::queue;
 using std::function;
 
-struct Err;
-
 class StatusWindow : public Window {
 public:
 
@@ -24,7 +22,6 @@ public:
     void divider();
     void set(const string &text);
     void error(const string &err);
-    void error(const Err &err);
 
 };
 
@@ -57,11 +54,6 @@ public:
 
     int printFile(const string &fileName, StatusWindow &st, int y);
 
-};
-
-struct Err {
-    string text;
-    int code;
 };
 
 #endif //TUNACHAT_WINDOWS_H

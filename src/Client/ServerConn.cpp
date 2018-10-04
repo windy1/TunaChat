@@ -6,11 +6,11 @@
 #include "Terminal/windows.h"
 #include "Terminal/MainWindow.h"
 #include "MessageChannel.h"
-#include <netinet/in.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <sstream>
+#include <fcntl.h>
 
 using std::stringstream;
 using std::make_shared;
@@ -19,10 +19,11 @@ using std::make_shared;
 /// == ServerConn ==
 ///
 
-ServerConn::ServerConn(ChatClient &client, const string &host, int port, int bufferSize) :
+ServerConn::ServerConn(ChatClient &client, const string &host, int port, int bufferSize, int timeout) :
     client(client), host(host), port(port), bufferSize(bufferSize) {
+    this->timeout = timeout;
     status = init();
-    status = sayHello();
+    if (status == STATUS_OK) status = sayHello();
 }
 
 ///
@@ -129,37 +130,102 @@ int ServerConn::getStatus() const {
 
 int ServerConn::init() {
     Terminal &term = client.getTerminal();
-    StatusPtr statusWin = term.getStatusWindow();
-
-    socket = ::socket(AF_INET, SOCK_STREAM, 0);
-    if (socket < 0) {
-        statusWin->error("Bad socket");
-        return STATUS_BAD_SOCKET;
-    }
+    StatusPtr st = term.getStatusWindow();
 
     sockaddr_in addr{};
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
 
+    if (!openSocket()) {
+        st->error("Bad socket");
+        return STATUS_BAD_SOCKET;
+    }
+    if (!verifyHost(addr)) {
+        st->error("Invalid host name.");
+        return STATUS_INVALID_ARG;
+    }
+    if (!setBlocking(false)) {
+        st->error("An unexpected error occurred: " + string(strerror(errno)));
+        return STATUS_BAD_CONNECT;
+    }
+
+    int connSt = connect(addr);
+    switch (connSt) {
+        case STATUS_BAD_CONNECT:
+            st->error("Connection failed.");
+            return connSt;
+        case STATUS_TIMEOUT:
+            st->error("Connection timed out.");
+            return connSt;
+        default:
+            break;
+    }
+
+    if (!setBlocking(true)) {
+        st->error("An unexpected error occurred: " + string(strerror(errno)));
+        return STATUS_BAD_CONNECT;
+    }
+
+    st->set("Connected; authenticate with /auth <user> <pass>");
+    term.getInputWindow()->setTag(host);
+
+    return STATUS_OK;
+}
+
+bool ServerConn::openSocket() {
+    if ((socket = ::socket(AF_INET, SOCK_STREAM, 0)) < 0) return false;
+    return true;
+}
+
+bool ServerConn::verifyHost(sockaddr_in &addr) {
     if (inet_pton(AF_INET, host.c_str(), &addr.sin_addr) <= 0) {
         // try name lookup
         string ip;
         tuna::host2ip(host, ip);
         if (inet_pton(AF_INET, ip.c_str(), &addr.sin_addr) <= 0) {
-            statusWin->error("Invalid host name.");
-            return STATUS_INVALID_ARG;
+            return false;
         }
     }
+    return true;
+}
+
+bool ServerConn::setBlocking(bool blocking) {
+    int arg;
+    if ((arg = fcntl(socket, F_GETFL, nullptr)) < 0) return false;
+    if (!blocking) {
+        arg |= O_NONBLOCK;
+    } else {
+        arg &= (~O_NONBLOCK);
+    }
+    if (fcntl(socket, F_SETFL, arg) < 0) return false;
+    return true;
+}
+
+int ServerConn::connect(sockaddr_in &addr) {
+    fd_set fds;
+    bool failed = false;
+
+    timeval tv{};
+    tv.tv_sec = timeout;
+    tv.tv_usec = 0;
 
     if (::connect(socket, (sockaddr*) &addr, sizeof(addr)) < 0) {
-        statusWin->error("Connection failed.");
-        return STATUS_BAD_CONNECT;
+        if (errno == EINPROGRESS) {
+            FD_ZERO(&fds);
+            FD_SET(socket, &fds);
+            if (select(socket + 1, nullptr, &fds, nullptr, &tv) == 1) {
+                int err;
+                socklen_t len = sizeof(err);
+                getsockopt(socket, SOL_SOCKET, SO_ERROR, &err, &len);
+                failed = err != 0;
+            } else {
+                return STATUS_TIMEOUT;
+            }
+        } else {
+            failed = true;
+        }
     }
-
-    statusWin->set("Connected; authenticate with /auth <user> <pass>");
-
-    term.getInputWindow()->setTag(host);
-
+    if (failed) return STATUS_BAD_CONNECT;
     return STATUS_OK;
 }
 

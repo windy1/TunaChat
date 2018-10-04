@@ -96,23 +96,27 @@ int ChatClient::quit(const vector<string> &args) {
 }
 
 int ChatClient::connect(const vector<string> &args) {
-    StatusPtr statusWin = term.getStatusWindow();
+    StatusPtr st = term.getStatusWindow();
     string host = args[0];
     int port = DEFAULT_PORT;
     if (args.size() > 1) {
         try {
             port = stoi(args[1]);
         } catch (...) {
-            statusWin->error("Invalid port number.");
+            st->error("Invalid port number.");
             return STATUS_INVALID_ARG;
         }
     }
 
     char msg[100];
     sprintf(msg, "Connecting to %s %d...", host.c_str(), port);
-    statusWin->set(msg);
+    st->set(msg);
+    st->divider();
+    st->refresh();
 
-    conn = make_shared<ServerConn>(*this, host, port);
+    if ((conn = make_shared<ServerConn>(*this, host, port))->getStatus() != STATUS_OK) {
+        conn = nullptr;
+    }
 
     return STATUS_OK;
 }
