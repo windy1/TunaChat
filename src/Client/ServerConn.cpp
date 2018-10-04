@@ -120,12 +120,16 @@ int ServerConn::getBufferSize() const {
     return bufferSize;
 }
 
+int ServerConn::getTimeout() const {
+    return timeout;
+}
+
 int ServerConn::getStatus() const {
     return status;
 }
 
 ///
-/// == Private methods ==
+/// == Initialization ==
 ///
 
 int ServerConn::init() {
@@ -228,6 +232,10 @@ int ServerConn::connect(sockaddr_in &addr) {
     if (failed) return STATUS_BAD_CONNECT;
     return STATUS_OK;
 }
+
+///
+/// == Other private methods ==
+///
 
 int ServerConn::sayHello() {
     string res;

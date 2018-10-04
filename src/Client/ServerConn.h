@@ -34,13 +34,12 @@ class ServerConn {
      */
     int init();
 
+    /// == init() helpers ==
     bool openSocket();
-
     bool verifyHost(sockaddr_in &addr);
-
     bool setBlocking(bool blocking);
-
     int connect(sockaddr_in &addr);
+    /// ====================
 
     /**
      * Sends the initial "HELLO" to the server and awaits the server's response.
@@ -149,6 +148,13 @@ public:
      * @return buffer size for incoming data
      */
     int getBufferSize() const;
+
+    /**
+     * Returns the connection timeout, in seconds.
+     *
+     * @return connection timeout
+     */
+    int getTimeout() const;
 
     /**
      * Returns the current status code of this connection.

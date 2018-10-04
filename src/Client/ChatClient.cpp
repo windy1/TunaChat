@@ -80,6 +80,7 @@ int ChatClient::processInput(const string &in) {
             return cmd->execute(args);
         }
     }
+    term.getStatusWindow()->error("Unknown command.");
     return STATUS_UNKNOWN_CMD;
 }
 
@@ -99,6 +100,7 @@ int ChatClient::connect(const vector<string> &args) {
     StatusPtr st = term.getStatusWindow();
     string host = args[0];
     int port = DEFAULT_PORT;
+
     if (args.size() > 1) {
         try {
             port = stoi(args[1]);
@@ -146,6 +148,7 @@ int ChatClient::tell(const vector<string> &args) {
     char logText[1024];
     sprintf(logText, "<%s> [@%s] %s", conn->getUser().c_str(), user.c_str(), msg.c_str());
     term.getMainWindow()->log(logText);
+
     return STATUS_OK;
 }
 

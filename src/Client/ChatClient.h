@@ -15,7 +15,6 @@ using std::vector;
 
 class Command;
 class ServerConn;
-struct Err;
 
 typedef shared_ptr<Command> CmdPtr;
 typedef shared_ptr<ServerConn> ServerConnPtr;
@@ -27,11 +26,14 @@ class ChatClient {
     static const string HELP_FILE;
 
     Terminal term;
-    int status = STATUS_OK;
     vector<CmdPtr> commands;
     ServerConnPtr conn;
     bool waiting = false;
+    int status = STATUS_OK;
 
+    /**
+     * Displays the welcome message on the center window.
+     */
     void showWelcome();
 
 public:

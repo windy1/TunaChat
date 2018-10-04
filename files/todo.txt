@@ -1,1 +1,0 @@
-Tell should not allow you to send a message to yourself

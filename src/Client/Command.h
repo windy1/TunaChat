@@ -18,8 +18,6 @@ typedef int (ChatClient::*CmdExe)(const vector<string>&);
 
 class Command {
 
-    friend class CommandBuilder;
-
     ChatClient *client;
     string name;
     CmdExe exe;
@@ -120,6 +118,7 @@ public:
      * @param vec vector to put arguments in
      */
     static void parseArgs(const string &cmd, vector<string> &vec);
+
 };
 
 #endif //TUNACHAT_COMMAND_H
