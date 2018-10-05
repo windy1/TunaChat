@@ -69,4 +69,5 @@ void Terminal::init() {
     start_color();
     init_pair(COLOR_PAIR_DIVIDER, COLOR_CYAN, COLOR_BLACK);
     init_pair(COLOR_PAIR_ERROR, COLOR_WHITE, COLOR_RED);
+    init_pair(COLOR_PAIR_TITLE, COLOR_GREEN, COLOR_BLACK);
 }

@@ -18,6 +18,8 @@ using std::ifstream;
 /// == Statics ==
 ///
 
+const string ChatClient::DEFAULT_HOST = "23.101.131.85";
+
 const string ChatClient::TITLE_FILE = "files/title.txt";
 const string ChatClient::HELP_FILE = "files/help.txt";
 
@@ -28,7 +30,7 @@ const string ChatClient::HELP_FILE = "files/help.txt";
 ChatClient::ChatClient() {
     commands = {
         make_shared<Command>(this, "quit", &ChatClient::quit, "Usage: /quit"),
-        make_shared<Command>(this, "connect", &ChatClient::connect, "Usage: /connect <host> [port]", 2, 1),
+        make_shared<Command>(this, "connect", &ChatClient::connect, "Usage: /connect <host> [port]", 2, -1),
         make_shared<Command>(this, "auth", &ChatClient::authenticate, "Usage: /auth <user> <pass>", 2, 2, true),
         make_shared<Command>(this, "tell", &ChatClient::tell, "Usage: /tell <user> <message>", -1, 2, true, true),
         make_shared<Command>(this, "list", &ChatClient::list, "Usage: /list", -1, -1, true, true),
@@ -52,6 +54,8 @@ int ChatClient::start() {
     showWelcome();
 
     while (status != STATUS_CLOSED) {
+        refresh();
+
         st->divider();
         st->refresh();
 
@@ -98,15 +102,18 @@ int ChatClient::quit(const vector<string> &args) {
 
 int ChatClient::connect(const vector<string> &args) {
     StatusPtr st = term.getStatusWindow();
-    string host = args[0];
+    string host = DEFAULT_HOST;
     int port = DEFAULT_PORT;
 
-    if (args.size() > 1) {
-        try {
-            port = stoi(args[1]);
-        } catch (...) {
-            st->error("Invalid port number.");
-            return STATUS_INVALID_ARG;
+    if (!args.empty()) {
+        host = args[0];
+        if (args.size() > 1) {
+            try {
+                port = stoi(args[1]);
+            } catch (...) {
+                st->error("Invalid port number.");
+                return STATUS_INVALID_ARG;
+            }
         }
     }
 
@@ -203,8 +210,10 @@ int ChatClient::getStatus() const {
 
 void ChatClient::showWelcome() {
     CenterPtr center = term.getCenterWindow();
+    center->colorOn(COLOR_PAIR_TITLE);
     StatusPtr st = term.getStatusWindow();
     int y = center->printFile(TITLE_FILE, *st, 0);
+    center->colorOff(COLOR_PAIR_TITLE);
     center->printFile(HELP_FILE, *st, y);
     center->refresh();
 }
