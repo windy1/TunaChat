@@ -116,3 +116,8 @@ void Command::parseArgs(const string &cmd, vector<string> &vec) {
         vec.push_back(arg);
     }
 }
+
+void Command::getArg(string &arg, const vector<string> &args, int i, const string &def) {
+    if (args.size() > i) arg = args[i];
+    else arg = def;
+}

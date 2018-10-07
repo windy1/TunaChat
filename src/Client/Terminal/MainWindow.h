@@ -11,10 +11,11 @@ class MainWindow : public Window {
 
     string logText;
     queue<string> buffer;
+    string logFile;
 
 public:
 
-    explicit MainWindow(Terminal &term);
+    explicit MainWindow(Terminal &term, const string &logFile);
 
     /**
      * Prints a debug message to the console.
@@ -41,7 +42,7 @@ public:
     /**
      * Flushes the log queue, clears, and adds the text to the screen.
      */
-    void flush();
+    void flush(StatusWindow &st);
 
     void clearBuffer();
 
@@ -51,7 +52,7 @@ public:
      * @param fileName file name to print contents of
      * @param st status window
      */
-    void logFile(const string &fileName, StatusWindow &st);
+    void cat(const string &fileName, StatusWindow &st);
 
 };
 

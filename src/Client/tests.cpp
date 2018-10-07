@@ -10,6 +10,7 @@ int runTests() {
     int failed = 0;
     if (!test_ChatClient_parseArgs()) failed++;
     if (!test_host2ip()) failed++;
+    if (!test_Preference_keyExists()) failed++;
     return failed;
 }
 
@@ -28,4 +29,11 @@ bool test_host2ip() {
     tuna::host2ip(host, ip);
     printf("ip = %s\n", ip.c_str());
     return true;
+}
+
+bool test_Preference_keyExists() {
+    printf("== test_Preference_keyExists ==");
+    Preferences prefs;
+    prefs("foo", "bar");
+    return !prefs.keyExists("bar") && prefs.keyExists("foo");
 }

@@ -25,6 +25,7 @@ protected:
     int columns;
     int x;
     int y;
+    bool visible;
 
 public:
 

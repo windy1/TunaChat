@@ -8,4 +8,7 @@ Available commands:
                               online
   * /disconnect             - Disconnects from the
                               current server
+  * /clear                  - Clears the current output
+  * /pref <key> <value>     - Sets a user preference
+  * /prefs                  - Lists user preferences
   * /help                   - Lists available commands

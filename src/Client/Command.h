@@ -119,6 +119,8 @@ public:
      */
     static void parseArgs(const string &cmd, vector<string> &vec);
 
+    static void getArg(string &arg, const vector<string> &args, int i, const string &def);
+
 };
 
 #endif //TUNACHAT_COMMAND_H

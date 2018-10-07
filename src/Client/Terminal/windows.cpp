@@ -67,7 +67,7 @@ const string& InputWindow::getTag() const {
 ///
 
 CenterWindow::CenterWindow(Terminal &term) :
-    Window(term, 21, 60, term.getRows()/3 - 21/2, term.getColumns()/2 - 60/2) {}
+    Window(term, 24, 60, term.getRows()/3 - 24/2, term.getColumns()/2 - 60/2) {}
 
 int CenterWindow::printFile(const string &fileName, StatusWindow &st, int y) {
     auto f = [&](const string &ln) {

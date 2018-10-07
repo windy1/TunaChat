@@ -11,4 +11,6 @@ bool test_ChatClient_parseArgs();
 
 bool test_host2ip();
 
+bool test_Preference_keyExists();
+
 #endif //TUNACHAT_TESTS_H

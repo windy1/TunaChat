@@ -8,7 +8,7 @@
 /// == Window ==
 ///
 
-Window::Window(Terminal &term, int rows, int columns, int y, int x) : term(term) {
+Window::Window(Terminal &term, int rows, int columns, int y, int x) : term(term), visible(true) {
     win = newwin(this->rows = rows, this->columns = columns, y, x);
 }
 
@@ -51,7 +51,7 @@ void Window::getStr(string &str) {
 }
 
 void Window::refresh() {
-    wrefresh(win);
+    if (visible) wrefresh(win);
 }
 
 void Window::clear() {

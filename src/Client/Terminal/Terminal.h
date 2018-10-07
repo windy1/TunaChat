@@ -37,6 +37,8 @@ class Terminal {
 
 public:
 
+    explicit Terminal(const string &logFile);
+
     Terminal();
 
     ~Terminal();

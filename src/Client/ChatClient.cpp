@@ -18,23 +18,28 @@ using std::ifstream;
 /// == Statics ==
 ///
 
-const string ChatClient::DEFAULT_HOST = "23.101.131.85";
-
-const string ChatClient::TITLE_FILE = "files/title.txt";
-const string ChatClient::HELP_FILE = "files/help.txt";
+const string ChatClient::TITLE_FILE = "../files/title.txt";
+const string ChatClient::HELP_FILE = "../files/help.txt";
+const string ChatClient::LOG_FILE = "../files/log.txt";
 
 ///
 /// == ChatClient ==
 ///
 
 ChatClient::ChatClient() {
+    Preferences::load(prefs, "../files/conf.txt");
+    term = Terminal(prefs.getBool("LogFile") ? LOG_FILE : "");
+
     commands = {
         make_shared<Command>(this, "quit", &ChatClient::quit, "Usage: /quit"),
-        make_shared<Command>(this, "connect", &ChatClient::connect, "Usage: /connect <host> [port]", 2, -1),
-        make_shared<Command>(this, "auth", &ChatClient::authenticate, "Usage: /auth <user> <pass>", 2, 2, true),
+        make_shared<Command>(this, "connect", &ChatClient::connect, "Usage: /connect [host] [port]", 2, -1),
+        make_shared<Command>(this, "auth", &ChatClient::authenticate, "Usage: /auth [user] [pass]", 2, -1, true),
         make_shared<Command>(this, "tell", &ChatClient::tell, "Usage: /tell <user> <message>", -1, 2, true, true),
         make_shared<Command>(this, "list", &ChatClient::list, "Usage: /list", -1, -1, true, true),
         make_shared<Command>(this, "disconnect", &ChatClient::disconnect, "Usage: /disconnect", -1, -1, true),
+        make_shared<Command>(this, "clear", &ChatClient::clear, "Usage: /clear"),
+        make_shared<Command>(this, "pref", &ChatClient::preference, "Usage: /pref <key> <value>", 2, 2),
+        make_shared<Command>(this, "prefs", &ChatClient::preferences, "Usage: /prefs"),
         make_shared<Command>(this, "help", &ChatClient::help, "Usage: /help")
     };
 }
@@ -49,18 +54,16 @@ int ChatClient::start() {
     InputPtr input = term.getInputWindow();
     CenterPtr center = term.getCenterWindow();
 
-    main->refresh();
-
-    showWelcome();
-
     while (status != STATUS_CLOSED) {
         refresh();
 
         st->divider();
         st->refresh();
 
-        main->flush();
+        main->flush(*st);
         main->refresh();
+
+        if (conn == nullptr) showWelcome();
 
         input->reset();
         input->refresh();
@@ -102,20 +105,11 @@ int ChatClient::quit(const vector<string> &args) {
 
 int ChatClient::connect(const vector<string> &args) {
     StatusPtr st = term.getStatusWindow();
-    string host = DEFAULT_HOST;
-    int port = DEFAULT_PORT;
+    CenterPtr center = term.getCenterWindow();
 
-    if (!args.empty()) {
-        host = args[0];
-        if (args.size() > 1) {
-            try {
-                port = stoi(args[1]);
-            } catch (...) {
-                st->error("Invalid port number.");
-                return STATUS_INVALID_ARG;
-            }
-        }
-    }
+    string host;
+    Command::getArg(host, args, 0, prefs("DefaultHost"));
+    int port = prefs.getInt("DefaultPort");
 
     char msg[100];
     sprintf(msg, "Connecting to %s %d...", host.c_str(), port);
@@ -123,16 +117,21 @@ int ChatClient::connect(const vector<string> &args) {
     st->divider();
     st->refresh();
 
+    center->clear();
+    center->refresh();
     if ((conn = make_shared<ServerConn>(*this, host, port))->getStatus() != STATUS_OK) {
         conn = nullptr;
+        showWelcome();
     }
 
     return STATUS_OK;
 }
 
 int ChatClient::authenticate(const vector<string> &args) {
-    string user = args[0];
-    string pwd = args[1];
+    string user;
+    string pwd;
+    Command::getArg(user, args, 0, prefs("DefaultUser"));
+    Command::getArg(pwd, args, 1, prefs("DefaultPass"));
     conn->authenticate(user, pwd);
     return STATUS_OK;
 }
@@ -165,7 +164,7 @@ int ChatClient::list(const vector<string> &args) {
 }
 
 int ChatClient::help(const vector<string> &args) {
-    term.getMainWindow()->logFile(HELP_FILE, *term.getStatusWindow());
+    term.getMainWindow()->cat(HELP_FILE, *term.getStatusWindow());
     return STATUS_OK;
 }
 
@@ -177,6 +176,30 @@ int ChatClient::disconnect(const vector<string> &args) {
     MainPtr main = term.getMainWindow();
     main->clearBuffer();
     main->clear();
+    return STATUS_OK;
+}
+
+int ChatClient::clear(const vector<string> &args) {
+    MainPtr main = term.getMainWindow();
+    main->clearBuffer();
+    main->clear();
+    main->refresh();
+    return STATUS_OK;
+}
+
+int ChatClient::preference(const vector<string> &args) {
+    StatusPtr st = term.getStatusWindow();
+    if (prefs(args[0], args[1])) {
+        st->set("Preference set.");
+        prefs.save();
+        return STATUS_OK;
+    }
+    st->error("No preference with key: " + args[0]);
+    return STATUS_OK;
+}
+
+int ChatClient::preferences(const vector<string> &args) {
+    term.getMainWindow()->log(to_string(prefs));
     return STATUS_OK;
 }
 
@@ -198,6 +221,10 @@ const vector<CmdPtr>& ChatClient::getCommands() const {
 
 ServerConnPtr ChatClient::getConnection() const {
     return conn;
+}
+
+Preferences& ChatClient::getPreferences() const {
+    return (Preferences&) prefs;
 }
 
 int ChatClient::getStatus() const {

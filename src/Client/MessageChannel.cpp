@@ -38,7 +38,7 @@ int MessageChannel::start() {
 
     while (status != STATUS_CLOSED) {
         if (client.isWaiting()) {
-            main->flush();
+            main->flush(*st);
             main->refresh();
             input->refresh();
         }

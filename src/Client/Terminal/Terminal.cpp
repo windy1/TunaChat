@@ -13,13 +13,15 @@ using std::make_shared;
 /// == Terminal ==
 ///
 
-Terminal::Terminal() {
+Terminal::Terminal(const string &logFile) {
     init();
-    main = make_shared<MainWindow>(*this);
+    main = make_shared<MainWindow>(*this, logFile);
     status = make_shared<StatusWindow>(*this);
     input = make_shared<InputWindow>(*this);
     center = make_shared<CenterWindow>(*this);
 }
+
+Terminal::Terminal() : Terminal("") {}
 
 Terminal::~Terminal() {
     endwin();

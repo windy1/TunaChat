@@ -7,6 +7,7 @@
 
 #include "../tuna.h"
 #include "Terminal/Terminal.h"
+#include "Preferences.h"
 #include <string>
 #include <vector>
 
@@ -21,15 +22,14 @@ typedef shared_ptr<ServerConn> ServerConnPtr;
 
 class ChatClient {
 
-    static const int DEFAULT_PORT = 12000;
-    static const string DEFAULT_HOST;
-
     static const string TITLE_FILE;
     static const string HELP_FILE;
+    static const string LOG_FILE;
 
     Terminal term;
     vector<CmdPtr> commands;
     ServerConnPtr conn;
+    Preferences prefs;
     bool waiting = false;
     int status = STATUS_OK;
 
@@ -114,6 +114,18 @@ public:
      */
     int disconnect(const vector<string> &args);
 
+    int clear(const vector<string> &args);
+
+    /**
+     * Sets the preference to the specified value as given in the argument.
+     *
+     * @param args command line arguments
+     * @return status code
+     */
+    int preference(const vector<string> &args);
+
+    int preferences(const vector<string> &args);
+
     /**
      * Returns true if the client (main thread) is currently waiting for user input. This method is used to ensure there
      * are no concurrent modifications to the Terminal.
@@ -142,6 +154,8 @@ public:
      * @return active connection
      */
     ServerConnPtr getConnection() const;
+
+    Preferences& getPreferences() const;
 
     /**
      * Returns the client's current status code.

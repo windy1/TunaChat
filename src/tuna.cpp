@@ -64,5 +64,6 @@ bool tuna::fileFeed(const string &fileName, const function<void (const string &l
     if (!in) return false;
     string ln;
     while (getline(in, ln)) f(ln);
+    in.close();
     return true;
 }
