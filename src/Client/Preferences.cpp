@@ -9,7 +9,15 @@ using std::ofstream;
 using std::ifstream;
 using std::endl;
 
+///
+/// == Statics ==
+///
+
 const string Preferences::nval = string();
+
+///
+/// == Methods ==
+///
 
 bool Preferences::save() {
     ofstream out(fileName);
@@ -24,6 +32,10 @@ bool Preferences::save() {
 bool Preferences::keyExists(const string &key) const {
     return prefs.find(key) != prefs.end();
 }
+
+///
+/// == Key lookups ==
+///
 
 const string& Preferences::operator()(const string &key) const {
     return keyExists(key) ? prefs[key] : nval;
@@ -49,9 +61,17 @@ int Preferences::getBool(const string &key) const {
     return (bool) getInt(key);
 }
 
+///
+/// == Getters ==
+///
+
 const string& Preferences::getFileName() const {
     return fileName;
 }
+
+///
+/// == Static methods ==
+///
 
 bool Preferences::load(Preferences &prefs, const string &fileName) {
     ifstream in(fileName);

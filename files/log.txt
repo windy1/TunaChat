@@ -19,3 +19,11 @@
 	DefaultUser=wcrouse
 	LogFile=1
 
+[Mon Oct  8 14:00:22 2018] You have joined the server.
+[Mon Oct  8 14:00:22 2018] wcrouse has signed in
+[Mon Oct  8 14:00:25 2018] Online users:
+[Mon Oct  8 14:00:25 2018]   * wcrouse
+[Mon Oct  8 14:00:43 2018] sclark7 has signed in
+[Mon Oct  8 14:00:44 2018] sclark7 has signed off
+[Mon Oct  8 14:00:57 2018] sclark7 has signed in
+[Mon Oct  8 14:00:59 2018] sclark7 has signed off

@@ -25,6 +25,7 @@ class ChatClient {
     static const string TITLE_FILE;
     static const string HELP_FILE;
     static const string LOG_FILE;
+    static const string CONF_FILE;
 
     Terminal term;
     vector<CmdPtr> commands;
@@ -114,6 +115,12 @@ public:
      */
     int disconnect(const vector<string> &args);
 
+    /**
+     * Clears the current log output in the main window.
+     *
+     * @param args command line arguments
+     * @return status code
+     */
     int clear(const vector<string> &args);
 
     /**
@@ -124,6 +131,12 @@ public:
      */
     int preference(const vector<string> &args);
 
+    /**
+     * Lists currently set preferences.
+     *
+     * @param args command line arguments
+     * @return status code
+     */
     int preferences(const vector<string> &args);
 
     /**
@@ -155,6 +168,11 @@ public:
      */
     ServerConnPtr getConnection() const;
 
+    /**
+     * Returns the preferences of the client.
+     *
+     * @return preferences reference
+     */
     Preferences& getPreferences() const;
 
     /**

@@ -21,15 +21,15 @@ using std::ifstream;
 const string ChatClient::TITLE_FILE = "../files/title.txt";
 const string ChatClient::HELP_FILE = "../files/help.txt";
 const string ChatClient::LOG_FILE = "../files/log.txt";
+const string ChatClient::CONF_FILE = "../files/conf.txt";
 
 ///
 /// == ChatClient ==
 ///
 
 ChatClient::ChatClient() {
-    Preferences::load(prefs, "../files/conf.txt");
+    Preferences::load(prefs, CONF_FILE);
     term = Terminal(prefs.getBool("LogFile") ? LOG_FILE : "");
-
     commands = {
         make_shared<Command>(this, "quit", &ChatClient::quit, "Usage: /quit"),
         make_shared<Command>(this, "connect", &ChatClient::connect, "Usage: /connect [host] [port]", 2, -1),
@@ -53,7 +53,6 @@ int ChatClient::start() {
     StatusPtr st = term.getStatusWindow();
     InputPtr input = term.getInputWindow();
     CenterPtr center = term.getCenterWindow();
-
     while (status != STATUS_CLOSED) {
         refresh();
 

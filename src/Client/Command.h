@@ -119,6 +119,15 @@ public:
      */
     static void parseArgs(const string &cmd, vector<string> &vec);
 
+    /**
+     * Assigns the argument at the specified index in the specified vector if present, assignes the specified default
+     * value otherwise.
+     *
+     * @param arg argument to assign
+     * @param args argument vector
+     * @param i argument index
+     * @param def default value
+     */
     static void getArg(string &arg, const vector<string> &args, int i, const string &def);
 
 };

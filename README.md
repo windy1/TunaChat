@@ -15,5 +15,5 @@ library which is required for the client.
 Running
 -------
 
-Start the client with `./TunaChat --client`.  The client should be executed from the root directory of the project due
-to relative file paths (i.e. one directory up from `src`).
+Start the client with `./TunaChat --client`.  The client should be executed one-down from the root directory of the 
+project due to relative file paths (i.e. one directory down from the root).
