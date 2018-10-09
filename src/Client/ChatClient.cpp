@@ -167,14 +167,10 @@ int ChatClient::list(const vector<string> &args) {
     UserListPtr userList = term.getUserListWindow();
     MainPtr main = term.getMainWindow();
     if (userList->isOpened()) {
-        userList->clear();
+        userList->close(*main);
         userList->refresh();
-        userList->setOpened(false);
-        main->resize(main->getRows(), term.getColumns());
     } else {
-        main->resize(main->getRows(), main->getColumns() - userList->getColumns());
-        main->refresh();
-        userList->setOpened(true);
+        userList->open(*main);
         conn->requestList();
     }
     return STATUS_OK;
@@ -193,6 +189,13 @@ int ChatClient::disconnect(const vector<string> &args) {
     MainPtr main = term.getMainWindow();
     main->clearBuffer();
     main->clear();
+
+    UserListPtr userList = term.getUserListWindow();
+    if (userList->isOpened()) {
+        userList->close(*main);
+        userList->refresh();
+    }
+
     return STATUS_OK;
 }
 

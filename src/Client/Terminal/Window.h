@@ -42,9 +42,9 @@ public:
      * @param x start coordinate
      * @param colorPair registered color pair
      */
-    void drawHDiv(const string &ch, int y = 0, int x = 0, int colorPair = COLOR_PAIR_DIVIDER);
+    void drawHDiv(const string &ch, int y = 0, int x = 0, int colorPair = COLOR_PAIR_DIVIDER_H);
 
-    void drawVDiv(const string &ch, int y = 0, int x = 0, int colorPair = COLOR_PAIR_DIVIDER);
+    void drawVDiv(const string &ch, int y = 0, int x = 0, int colorPair = COLOR_PAIR_DIVIDER_H);
 
     /**
      * Toggles on the color attribute for the specified color pair.

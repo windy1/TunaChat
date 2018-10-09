@@ -89,9 +89,9 @@ bool Preferences::load(Preferences &prefs, const string &fileName) {
 }
 
 string to_string(const Preferences &prefs) {
-    string str = "* Preferences\n";
+    string str = "Preferences:\n";
     for (auto &pair : prefs.prefs) {
-        str += "\t" + pair.first + '=' + pair.second + '\n';
+        str += "  " + pair.first + '=' + pair.second + '\n';
     }
-    return str;
+    return str.substr(0, str.size() - 1);
 }

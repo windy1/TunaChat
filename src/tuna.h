@@ -42,7 +42,7 @@
 /// == ncurses colors ==
 ///
 
-#define COLOR_PAIR_DIVIDER      1
+#define COLOR_PAIR_DIVIDER_H    1
 #define COLOR_PAIR_DIVIDER_V    4
 #define COLOR_PAIR_ERROR        2
 #define COLOR_PAIR_TITLE        3

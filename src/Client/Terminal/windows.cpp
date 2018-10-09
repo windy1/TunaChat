@@ -4,6 +4,7 @@
 
 #include "windows.h"
 #include "Terminal.h"
+#include "MainWindow.h"
 #include <fstream>
 
 using std::ifstream;
@@ -66,8 +67,8 @@ const string& InputWindow::getTag() const {
 /// == CenterWindow ==
 ///
 
-CenterWindow::CenterWindow(Terminal &term) :
-    Window(term, 24, 60, term.getRows()/3 - 24/2, term.getColumns()/2 - 60/2) {}
+CenterWindow::CenterWindow(Terminal &term)
+    : Window(term, 24, 60, term.getRows()/3 - 24/2, term.getColumns()/2 - 60/2) {}
 
 int CenterWindow::printFile(const string &fileName, StatusWindow &st, int y) {
     auto f = [&](const string &ln) {
@@ -87,7 +88,7 @@ int CenterWindow::printFile(const string &fileName, StatusWindow &st, int y) {
 UserListWindow::UserListWindow(Terminal &term) : Window(term, term.getRows() - 4, 25, 2, term.getColumns() - 25) {}
 
 void UserListWindow::divider() {
-    drawVDiv("\u2551", 0, 0, COLOR_PAIR_DIVIDER);
+    drawVDiv("\u2551", 0, 0, COLOR_PAIR_DIVIDER_H);
 }
 
 void UserListWindow::set(const vector<string> &users) {
@@ -102,8 +103,17 @@ void UserListWindow::set(const vector<string> &users) {
     }
 }
 
-void UserListWindow::setOpened(bool opened) {
-    this->opened = opened;
+void UserListWindow::open(MainWindow &main) {
+    if (opened) return;
+    main.resize(main.getRows(), main.getColumns() - columns);
+    opened = true;
+}
+
+void UserListWindow::close(MainWindow &main) {
+    if (!opened) return;
+    clear();
+    opened = false;
+    main.resize(main.getRows(), term.getColumns());
 }
 
 bool UserListWindow::isOpened() const {

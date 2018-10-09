@@ -14,6 +14,8 @@ using std::vector;
 using std::queue;
 using std::function;
 
+class MainWindow;
+
 class StatusWindow : public Window {
 public:
 
@@ -67,7 +69,8 @@ public:
     void divider();
     void set(const vector<string> &users);
 
-    void setOpened(bool opened);
+    void open(MainWindow &main);
+    void close(MainWindow &main);
     bool isOpened() const;
 
 };
