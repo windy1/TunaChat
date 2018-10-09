@@ -56,4 +56,20 @@ public:
 
 };
 
+class UserListWindow : public Window {
+
+    bool opened;
+
+public:
+
+    explicit UserListWindow(Terminal &term);
+
+    void divider();
+    void set(const vector<string> &users);
+
+    void setOpened(bool opened);
+    bool isOpened() const;
+
+};
+
 #endif //TUNACHAT_WINDOWS_H

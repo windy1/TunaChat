@@ -53,6 +53,7 @@ int ChatClient::start() {
     StatusPtr st = term.getStatusWindow();
     InputPtr input = term.getInputWindow();
     CenterPtr center = term.getCenterWindow();
+    UserListPtr userList = term.getUserListWindow();
     while (status != STATUS_CLOSED) {
         refresh();
 
@@ -61,6 +62,11 @@ int ChatClient::start() {
 
         main->flush(*st);
         main->refresh();
+
+        if (userList->isOpened()) {
+            userList->divider();
+            userList->refresh();
+        }
 
         if (conn == nullptr) showWelcome();
 
@@ -158,7 +164,19 @@ int ChatClient::tell(const vector<string> &args) {
 }
 
 int ChatClient::list(const vector<string> &args) {
-    conn->requestList();
+    UserListPtr userList = term.getUserListWindow();
+    MainPtr main = term.getMainWindow();
+    if (userList->isOpened()) {
+        userList->clear();
+        userList->refresh();
+        userList->setOpened(false);
+        main->resize(main->getRows(), term.getColumns());
+    } else {
+        main->resize(main->getRows(), main->getColumns() - userList->getColumns());
+        main->refresh();
+        userList->setOpened(true);
+        conn->requestList();
+    }
     return STATUS_OK;
 }
 

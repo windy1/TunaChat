@@ -42,9 +42,10 @@
 /// == ncurses colors ==
 ///
 
-#define COLOR_PAIR_DIVIDER  1
-#define COLOR_PAIR_ERROR    2
-#define COLOR_PAIR_TITLE    3
+#define COLOR_PAIR_DIVIDER      1
+#define COLOR_PAIR_DIVIDER_V    4
+#define COLOR_PAIR_ERROR        2
+#define COLOR_PAIR_TITLE        3
 
 #include <string>
 #include <vector>

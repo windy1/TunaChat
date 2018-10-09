@@ -29,6 +29,7 @@ int MessageChannel::start() {
     MainPtr main = term.getMainWindow();
     StatusPtr st = term.getStatusWindow();
     InputPtr input = term.getInputWindow();
+    UserListPtr userList = term.getUserListWindow();
 
     string header;
     string body1;
@@ -40,6 +41,7 @@ int MessageChannel::start() {
         if (client.isWaiting()) {
             main->flush(*st);
             main->refresh();
+            if (userList->isOpened()) userList->refresh();
             input->refresh();
         }
 
@@ -53,10 +55,12 @@ int MessageChannel::start() {
         if (!tuna::parse3(data, header, body1, body2) && !tuna::parse2(data, header, body1)) {
             stringstream in(data);
             string user;
-            main->log("Online users:");
+            vector<string> users;
             while (getline(in, user, ',')) {
-                main->log("  * " + user);
+                if (user[0] == ' ') user = user.substr(1);
+                users.push_back(user);
             }
+            userList->set(users);
             continue;
         }
 

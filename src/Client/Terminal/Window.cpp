@@ -20,12 +20,20 @@ Window::~Window() {
 /// == Methods ==
 ///
 
-void Window::drawDivider(const string &ch, int y, int x, int colorPair) {
+void Window::drawHDiv(const string &ch, int y, int x, int colorPair) {
     string divider;
-    for (int i = 0; i < columns; i++) divider += ch;
-    colorOn(colorPair);
+    for (int i = 0; i < columns - x; i++) divider += ch;
+    if (colorPair != -1) colorOn(colorPair);
     addStr(y, x, divider);
-    colorOff(colorPair);
+    if (colorPair != -1) colorOff(colorPair);
+}
+
+void Window::drawVDiv(const string &ch, int y, int x, int colorPair) {
+    if (colorPair != -1) colorOn(colorPair);
+    for (int row = y; row < rows; row++) {
+        addStr(row, x, ch);
+    }
+    if (colorPair != -1) colorOff(colorPair);
 }
 
 void Window::colorOn(int colorPair) {
@@ -60,6 +68,14 @@ void Window::clear() {
 
 void Window::scrollOk(bool scroll) {
     scrollok(win, scroll);
+}
+
+void Window::box(char ch) {
+    ::box(win, ch, ch);
+}
+
+void Window::resize(int rows, int columns) {
+    wresize(win, rows, columns);
 }
 
 ///

@@ -14,11 +14,13 @@ class MainWindow;
 class InputWindow;
 class StatusWindow;
 class CenterWindow;
+class UserListWindow;
 
 typedef shared_ptr<MainWindow> MainPtr;
 typedef shared_ptr<InputWindow> InputPtr;
 typedef shared_ptr<StatusWindow> StatusPtr;
 typedef shared_ptr<CenterWindow> CenterPtr;
+typedef shared_ptr<UserListWindow> UserListPtr;
 
 class Terminal {
 
@@ -26,6 +28,7 @@ class Terminal {
     InputPtr input;
     StatusPtr status;
     CenterPtr center;
+    UserListPtr userList;
 
     int rows;
     int columns;
@@ -70,6 +73,8 @@ public:
      * @return center window
      */
     CenterPtr getCenterWindow() const;
+
+    UserListPtr getUserListWindow() const;
 
     /**
      * Returns the total rows on the screen.

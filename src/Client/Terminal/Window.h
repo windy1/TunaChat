@@ -42,7 +42,9 @@ public:
      * @param x start coordinate
      * @param colorPair registered color pair
      */
-    void drawDivider(const string &ch, int y = 0, int x = 0, int colorPair = COLOR_PAIR_DIVIDER);
+    void drawHDiv(const string &ch, int y = 0, int x = 0, int colorPair = COLOR_PAIR_DIVIDER);
+
+    void drawVDiv(const string &ch, int y = 0, int x = 0, int colorPair = COLOR_PAIR_DIVIDER);
 
     /**
      * Toggles on the color attribute for the specified color pair.
@@ -96,6 +98,8 @@ public:
     void refresh();
     void clear();
     void scrollOk(bool scroll);
+    void box(char ch = '*');
+    void resize(int rows, int columns);
 
     /// ======================
 
