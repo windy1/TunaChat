@@ -13,7 +13,7 @@ using std::endl;
 /// == Statics ==
 ///
 
-const string Preferences::nval = string();
+const string Preferences::nval;
 
 ///
 /// == Methods ==

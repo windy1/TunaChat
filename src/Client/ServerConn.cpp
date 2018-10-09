@@ -19,8 +19,8 @@ using std::make_shared;
 /// == ServerConn ==
 ///
 
-ServerConn::ServerConn(ChatClient &client, const string &host, int port, int bufferSize, int timeout) :
-    client(client), host(host), port(port), bufferSize(bufferSize) {
+ServerConn::ServerConn(ChatClient &client, const string &host, int port, int bufferSize, int timeout)
+        : client(client), host(host), port(port), bufferSize(bufferSize) {
     this->timeout = timeout;
     status = init();
     if (status == STATUS_OK) status = sayHello();

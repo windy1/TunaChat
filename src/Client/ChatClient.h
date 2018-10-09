@@ -35,6 +35,11 @@ class ChatClient {
     int status = STATUS_OK;
 
     /**
+     * Initializes the commands for this client.
+     */
+    void initCommands();
+
+    /**
      * Displays the welcome message on the center window.
      */
     void showWelcome();

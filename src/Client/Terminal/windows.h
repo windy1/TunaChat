@@ -16,6 +16,10 @@ using std::function;
 
 class MainWindow;
 
+///
+/// == StatusWindow ==
+///
+
 class StatusWindow : public Window {
 public:
 
@@ -26,6 +30,10 @@ public:
     void error(const string &err);
 
 };
+
+///
+/// == InputWindow ==
+///
 
 class InputWindow : public Window {
 
@@ -46,6 +54,10 @@ public:
 
 };
 
+///
+/// == CenterWindow ==
+///
+
 class CenterWindow : public Window {
 
     int padding = 1;
@@ -57,6 +69,10 @@ public:
     int printFile(const string &fileName, StatusWindow &st, int y);
 
 };
+
+///
+/// == UserListWindow ==
+///
 
 class UserListWindow : public Window {
 

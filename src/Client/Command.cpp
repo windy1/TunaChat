@@ -22,15 +22,15 @@ Command::Command(
     int maxArgs,
     int minArgs,
     bool connReq,
-    bool authReq) :
-    client(client),
-    name(name),
-    exe(exe),
-    usage(usage),
-    maxArgs(maxArgs),
-    minArgs(minArgs),
-    connReq(connReq),
-    authReq(authReq) {}
+    bool authReq)
+        : client(client),
+          name(name),
+          exe(exe),
+          usage(usage),
+          maxArgs(maxArgs),
+          minArgs(minArgs),
+          connReq(connReq),
+          authReq(authReq) {}
 
 ///
 /// == Methods ==

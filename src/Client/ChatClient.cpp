@@ -30,18 +30,7 @@ const string ChatClient::CONF_FILE = "../files/conf.txt";
 ChatClient::ChatClient() {
     Preferences::load(prefs, CONF_FILE);
     term = Terminal(prefs.getBool("LogFile") ? LOG_FILE : "");
-    commands = {
-        make_shared<Command>(this, "quit", &ChatClient::quit, "Usage: /quit"),
-        make_shared<Command>(this, "connect", &ChatClient::connect, "Usage: /connect [host] [port]", 2, -1),
-        make_shared<Command>(this, "auth", &ChatClient::authenticate, "Usage: /auth [user] [pass]", 2, -1, true),
-        make_shared<Command>(this, "tell", &ChatClient::tell, "Usage: /tell <user> <message>", -1, 2, true, true),
-        make_shared<Command>(this, "list", &ChatClient::list, "Usage: /list", -1, -1, true, true),
-        make_shared<Command>(this, "disconnect", &ChatClient::disconnect, "Usage: /disconnect", -1, -1, true),
-        make_shared<Command>(this, "clear", &ChatClient::clear, "Usage: /clear"),
-        make_shared<Command>(this, "pref", &ChatClient::preference, "Usage: /pref <key> <value>", 2, 2),
-        make_shared<Command>(this, "prefs", &ChatClient::preferences, "Usage: /prefs"),
-        make_shared<Command>(this, "help", &ChatClient::help, "Usage: /help")
-    };
+    initCommands();
 }
 
 ///
@@ -254,6 +243,21 @@ int ChatClient::getStatus() const {
 ///
 /// == Private methods ==
 ///
+
+void ChatClient::initCommands() {
+    commands = {
+            make_shared<Command>(this, "quit", &ChatClient::quit, "Usage: /quit"),
+            make_shared<Command>(this, "connect", &ChatClient::connect, "Usage: /connect [host] [port]", 2, -1),
+            make_shared<Command>(this, "auth", &ChatClient::authenticate, "Usage: /auth [user] [pass]", 2, -1, true),
+            make_shared<Command>(this, "tell", &ChatClient::tell, "Usage: /tell <user> <message>", -1, 2, true, true),
+            make_shared<Command>(this, "list", &ChatClient::list, "Usage: /list", -1, -1, true, true),
+            make_shared<Command>(this, "disconnect", &ChatClient::disconnect, "Usage: /disconnect", -1, -1, true),
+            make_shared<Command>(this, "clear", &ChatClient::clear, "Usage: /clear"),
+            make_shared<Command>(this, "pref", &ChatClient::preference, "Usage: /pref <key> <value>", 2, 2),
+            make_shared<Command>(this, "prefs", &ChatClient::preferences, "Usage: /prefs"),
+            make_shared<Command>(this, "help", &ChatClient::help, "Usage: /help")
+    };
+}
 
 void ChatClient::showWelcome() {
     CenterPtr center = term.getCenterWindow();

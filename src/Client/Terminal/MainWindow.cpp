@@ -17,8 +17,8 @@ using std::localtime;
 /// == MainWindow ==
 ///
 
-MainWindow::MainWindow(Terminal &term, const string &logFile) :
-        logFile(logFile), Window(term, term.getRows() - 4, term.getColumns() - 2, 2, 1) {
+MainWindow::MainWindow(Terminal &term, const string &logFile)
+        : logFile(logFile), Window(term, term.getRows() - 4, term.getColumns() - 2, 2, 1) {
     scrollOk(true);
 }
 
