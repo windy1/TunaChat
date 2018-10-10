@@ -44,6 +44,14 @@ public:
      */
     void drawHDiv(const string &ch, int y = 0, int x = 0, int colorPair = COLOR_PAIR_DIVIDER_H);
 
+    /**
+     * Draws a vertical divider down the window using the specified string.
+     *
+     * @param ch divider character
+     * @param y start coordinate
+     * @param x start coordinate
+     * @param colorPair registered color pair
+     */
     void drawVDiv(const string &ch, int y = 0, int x = 0, int colorPair = COLOR_PAIR_DIVIDER_H);
 
     /**

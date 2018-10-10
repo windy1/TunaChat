@@ -157,3 +157,5 @@
 [Tue Oct  9 20:30:49 2018] test1 has signed off
 [Tue Oct  9 20:30:49 2018] test1 has signed off
 [Tue Oct  9 20:30:56 2018] wcrouse has signed off
+[Tue Oct  9 20:36:43 2018] You have joined the server.
+[Tue Oct  9 20:36:43 2018] wcrouse has signed in

@@ -44,6 +44,9 @@ public:
      */
     void flush(StatusWindow &st);
 
+    /**
+     * Clears the current log buffer.
+     */
     void clearBuffer();
 
     /**

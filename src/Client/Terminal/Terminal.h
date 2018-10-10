@@ -74,6 +74,11 @@ public:
      */
     CenterPtr getCenterWindow() const;
 
+    /**
+     * Returns the window that displays the user list.
+     *
+     * @return window that displays user list
+     */
     UserListPtr getUserListWindow() const;
 
     /**

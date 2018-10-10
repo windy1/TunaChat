@@ -5,7 +5,7 @@
 #include "Terminal.h"
 #include "windows.h"
 #include "MainWindow.h"
-#include <locale.h>
+#include <clocale>
 
 using std::make_shared;
 
