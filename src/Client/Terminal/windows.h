@@ -25,7 +25,6 @@ public:
 
     explicit StatusWindow(Terminal &term);
 
-    void divider();
     void set(const string &text);
     void error(const string &err);
 
@@ -46,8 +45,6 @@ public:
     explicit InputWindow(Terminal &term);
 
     void reset();
-    void divider();
-    void tag();
 
     void setTag(const string &tag);
     const string& getTag() const;
@@ -77,17 +74,21 @@ public:
 class UserListWindow : public Window {
 
     bool opened;
+    long openTime;
+    long refreshRate;
 
 public:
 
-    explicit UserListWindow(Terminal &term);
+    explicit UserListWindow(Terminal &term, long refreshRate = 10);
 
-    void divider();
     void set(const vector<string> &users);
 
     void open(MainWindow &main);
     void close(MainWindow &main);
+    void resetTime();
     bool isOpened() const;
+    long getOpenTime() const;
+    long getRefreshRate() const;
 
 };
 

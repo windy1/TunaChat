@@ -100,6 +100,8 @@ public:
     void scrollOk(bool scroll);
     void box(char ch = '*');
     void resize(int rows, int columns);
+    void move(int y, int x);
+    void background(int colorPair);
 
     /// ======================
 

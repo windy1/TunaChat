@@ -46,6 +46,7 @@
 #define COLOR_PAIR_DIVIDER_V    4
 #define COLOR_PAIR_ERROR        2
 #define COLOR_PAIR_TITLE        3
+#define COLOR_PAIR_DEBUG        5
 
 #include <string>
 #include <vector>

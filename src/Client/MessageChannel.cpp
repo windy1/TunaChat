@@ -41,7 +41,14 @@ int MessageChannel::start() {
         if (client.isWaiting()) {
             main->flush(*st);
             main->refresh();
-            if (userList->isOpened()) userList->refresh();
+            if (userList->isOpened()) {
+                if (time(nullptr) - userList->getOpenTime() >= userList->getRefreshRate()) {
+                    // refresh the open user list
+                    conn.requestList();
+                    userList->resetTime();
+                }
+                userList->refresh();
+            }
             input->refresh();
         }
 

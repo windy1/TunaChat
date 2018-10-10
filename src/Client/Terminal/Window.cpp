@@ -4,6 +4,8 @@
 
 #include "Window.h"
 
+using std::to_string;
+
 ///
 /// == Window ==
 ///
@@ -75,7 +77,15 @@ void Window::box(char ch) {
 }
 
 void Window::resize(int rows, int columns) {
-    wresize(win, rows, columns);
+    wresize(win, this->rows = rows, this->columns = columns);
+}
+
+void Window::move(int y, int x) {
+    wmove(win, this->y = y, this->x = x);
+}
+
+void Window::background(int colorPair) {
+    wbkgd(win, COLOR_PAIR(colorPair));
 }
 
 ///

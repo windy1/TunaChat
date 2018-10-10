@@ -20,6 +20,7 @@ using std::localtime;
 MainWindow::MainWindow(Terminal &term, const string &logFile)
         : logFile(logFile), Window(term, term.getRows() - 4, term.getColumns() - 2, 2, 1) {
     scrollOk(true);
+    //background(COLOR_PAIR_DEBUG);
 }
 
 ///

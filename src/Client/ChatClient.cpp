@@ -43,21 +43,14 @@ int ChatClient::start() {
     InputPtr input = term.getInputWindow();
     CenterPtr center = term.getCenterWindow();
     UserListPtr userList = term.getUserListWindow();
+    st->set("");
     while (status != STATUS_CLOSED) {
-        refresh();
-
-        st->divider();
-        st->refresh();
-
         main->flush(*st);
+        st->refresh();
         main->refresh();
 
-        if (userList->isOpened()) {
-            userList->divider();
-            userList->refresh();
-        }
-
         if (conn == nullptr) showWelcome();
+        if (userList->isOpened()) userList->refresh();
 
         input->reset();
         input->refresh();
@@ -108,7 +101,6 @@ int ChatClient::connect(const vector<string> &args) {
     char msg[100];
     sprintf(msg, "Connecting to %s %d...", host.c_str(), port);
     st->set(msg);
-    st->divider();
     st->refresh();
 
     center->clear();
@@ -157,9 +149,12 @@ int ChatClient::list(const vector<string> &args) {
     MainPtr main = term.getMainWindow();
     if (userList->isOpened()) {
         userList->close(*main);
-        userList->refresh();
+        userList->refresh();    // user list now clear
+        main->refresh();        // main now scaled to normal
     } else {
         userList->open(*main);
+        main->refresh();        // user list scaled down
+        userList->refresh();    // user list now visible
         conn->requestList();
     }
     return STATUS_OK;

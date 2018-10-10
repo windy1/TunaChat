@@ -16,17 +16,15 @@ using std::to_string;
 
 StatusWindow::StatusWindow(Terminal &term) : Window(term, 2, term.getColumns(), 0, 0) {}
 
-void StatusWindow::divider() {
-    drawHDiv("\u2550", 1, 0);
-}
-
 void StatusWindow::set(const string &text) {
     clear();
+    drawHDiv("\u2550", 1, 0);
     addStr(0, 0, text);
 }
 
 void StatusWindow::error(const string &err) {
     clear();
+    drawHDiv("\u2550", 1, 0);
     colorOn(COLOR_PAIR_ERROR);
     addStr(0, 0, err);
     colorOff(COLOR_PAIR_ERROR);
@@ -43,15 +41,7 @@ InputWindow::InputWindow(Terminal &term)
 
 void InputWindow::reset() {
     clear();
-    divider();
-    tag();
-}
-
-void InputWindow::divider() {
     drawHDiv("\u2550", 0, 0);
-}
-
-void InputWindow::tag() {
     addStr(1, 0, "[" + tagStr + "] ");
 }
 
@@ -85,13 +75,12 @@ int CenterWindow::printFile(const string &fileName, StatusWindow &st, int y) {
 /// == UserListWindow ==
 ///
 
-UserListWindow::UserListWindow(Terminal &term) : Window(term, term.getRows() - 4, 25, 2, term.getColumns() - 25) {}
-
-void UserListWindow::divider() {
-    drawVDiv("\u2551", 0, 0, COLOR_PAIR_DIVIDER_H);
-}
+UserListWindow::UserListWindow(Terminal &term, long refreshRate)
+    : refreshRate(refreshRate), Window(term, term.getRows() - 4, 25, 2, term.getColumns() - 25) {}
 
 void UserListWindow::set(const vector<string> &users) {
+    clear();
+    drawVDiv("\u2551", 0, 0, COLOR_PAIR_DIVIDER_H);
     colorOn(COLOR_PAIR_TITLE);
     addStr(0, 2, "Online users (" + to_string(users.size()) + ")");
     colorOff(COLOR_PAIR_TITLE);
@@ -105,17 +94,30 @@ void UserListWindow::set(const vector<string> &users) {
 
 void UserListWindow::open(MainWindow &main) {
     if (opened) return;
-    main.resize(main.getRows(), main.getColumns() - columns);
+    main.resize(main.getRows(), term.getColumns() - columns - 2);
     opened = true;
+    openTime = time(nullptr);
 }
 
 void UserListWindow::close(MainWindow &main) {
     if (!opened) return;
+    main.resize(main.getRows(), term.getColumns() - 2);
     clear();
     opened = false;
-    main.resize(main.getRows(), term.getColumns());
+}
+
+void UserListWindow::resetTime() {
+    openTime = time(nullptr);
 }
 
 bool UserListWindow::isOpened() const {
     return opened;
+}
+
+long UserListWindow::getOpenTime() const {
+    return openTime;
+}
+
+long UserListWindow::getRefreshRate() const {
+    return refreshRate;
 }

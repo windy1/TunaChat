@@ -1,12 +1,159 @@
-[Tue Oct  9 02:18:23 2018] Preferences:
+[Tue Oct  9 20:08:22 2018] You have joined the server.
+[Tue Oct  9 20:08:22 2018] test1 has signed in
+[Tue Oct  9 20:08:31 2018] test1 has signed in
+[Tue Oct  9 20:08:34 2018] test1 has signed off
+[Tue Oct  9 20:08:34 2018] wcrouse has signed in
+[Tue Oct  9 20:08:40 2018] You have joined the server.
+[Tue Oct  9 20:08:40 2018] wcrouse has signed off
+[Tue Oct  9 20:08:40 2018] wcrouse has signed off
+[Tue Oct  9 20:09:01 2018] You have joined the server.
+[Tue Oct  9 20:09:01 2018] wcrouse has signed in
+[Tue Oct  9 20:09:08 2018] wthogan has signed off
+[Tue Oct  9 20:10:06 2018] You have joined the server.
+[Tue Oct  9 20:10:06 2018] test1 has signed in
+[Tue Oct  9 20:10:18 2018] wcrouse has signed in
+[Tue Oct  9 20:10:18 2018] You have joined the server.
+[Tue Oct  9 20:10:18 2018] wcrouse has signed in
+[Tue Oct  9 20:10:22 2018] test1 has signed in
+[Tue Oct  9 20:10:22 2018] test1 has signed in
+[Tue Oct  9 20:10:24 2018] test1 has signed off
+[Tue Oct  9 20:10:24 2018] test1 has signed off
+[Tue Oct  9 20:10:33 2018] test1 has signed in
+[Tue Oct  9 20:10:33 2018] test1 has signed in
+[Tue Oct  9 20:10:35 2018] test1 has signed off
+[Tue Oct  9 20:10:58 2018] test1 has signed off
+[Tue Oct  9 20:11:24 2018] test1 has signed in
+[Tue Oct  9 20:11:26 2018] test1 has signed off
+[Tue Oct  9 20:12:48 2018] test1 has signed in
+[Tue Oct  9 20:12:54 2018] test4 has signed in
+[Tue Oct  9 20:12:57 2018] test1 has signed off
+[Tue Oct  9 20:14:36 2018] test1 has signed in
+[Tue Oct  9 20:14:45 2018] test1 has signed in
+[Tue Oct  9 20:14:47 2018] test1 has signed off
+[Tue Oct  9 20:15:15 2018] test4 has signed in
+[Tue Oct  9 20:15:44 2018] test1 has signed in
+[Tue Oct  9 20:16:17 2018] Preferences:
   DefaultHost=23.101.131.85
   DefaultPass=p001
   DefaultPort=12000
   DefaultUser=test1
   LogFile=1
-[Tue Oct  9 02:18:33 2018] Preferences:
+[Tue Oct  9 20:16:31 2018] Preferences:
   DefaultHost=23.101.131.85
-  DefaultPass=p001
+  DefaultPass=esuorcw
   DefaultPort=12000
-  DefaultUser=test1
+  DefaultUser=wcrouse
   LogFile=1
+[Tue Oct  9 20:16:41 2018] Available commands:
+[Tue Oct  9 20:16:41 2018]   * /quit                   - Stops the client
+[Tue Oct  9 20:16:41 2018]   * /connect <host> [port]  - Connects to a chat server
+[Tue Oct  9 20:16:41 2018]   * /auth <user> <pass>     - Authenticates with the
+[Tue Oct  9 20:16:41 2018]                               server
+[Tue Oct  9 20:16:41 2018]   * /tell <user> <text>     - Sends a message
+[Tue Oct  9 20:16:41 2018]   * /list                   - Lists users currently
+[Tue Oct  9 20:16:41 2018]                               online
+[Tue Oct  9 20:16:41 2018]   * /disconnect             - Disconnects from the
+[Tue Oct  9 20:16:41 2018]                               current server
+[Tue Oct  9 20:16:41 2018]   * /clear                  - Clears the current output
+[Tue Oct  9 20:16:41 2018]   * /pref <key> <value>     - Sets a user preference
+[Tue Oct  9 20:16:41 2018]   * /prefs                  - Lists user preferences
+[Tue Oct  9 20:16:41 2018]   * /help                   - Lists available commands
+[Tue Oct  9 20:16:49 2018] You have joined the server.
+[Tue Oct  9 20:16:49 2018] wcrouse has signed in
+[Tue Oct  9 20:16:53 2018] Available commands:
+[Tue Oct  9 20:16:53 2018]   * /quit                   - Stops the client
+[Tue Oct  9 20:16:53 2018]   * /connect <host> [port]  - Connects to a chat server
+[Tue Oct  9 20:16:53 2018]   * /auth <user> <pass>     - Authenticates with the
+[Tue Oct  9 20:16:53 2018]                               server
+[Tue Oct  9 20:16:53 2018]   * /tell <user> <text>     - Sends a message
+[Tue Oct  9 20:16:53 2018]   * /list                   - Lists users currently
+[Tue Oct  9 20:16:53 2018]                               online
+[Tue Oct  9 20:16:53 2018]   * /disconnect             - Disconnects from the
+[Tue Oct  9 20:16:53 2018]                               current server
+[Tue Oct  9 20:16:53 2018]   * /clear                  - Clears the current output
+[Tue Oct  9 20:16:53 2018]   * /pref <key> <value>     - Sets a user preference
+[Tue Oct  9 20:16:53 2018]   * /prefs                  - Lists user preferences
+[Tue Oct  9 20:16:53 2018]   * /help                   - Lists available commands
+[Tue Oct  9 20:17:48 2018] test1 has signed in
+[Tue Oct  9 20:18:39 2018] mgplumme has signed in
+[Tue Oct  9 20:19:10 2018] You have joined the server.
+[Tue Oct  9 20:19:10 2018] wcrouse has signed in
+[Tue Oct  9 20:19:28 2018] test1 has signed in
+[Tue Oct  9 20:19:37 2018] test1 has signed in
+[Tue Oct  9 20:19:37 2018] You have joined the server.
+[Tue Oct  9 20:19:37 2018] test1 has signed in
+[Tue Oct  9 20:19:43 2018] <test1> [@wcrouse] hey whats up
+[Tue Oct  9 20:19:43 2018] <test1> hey whats up
+[Tue Oct  9 20:20:05 2018] You have joined the server.
+[Tue Oct  9 20:20:05 2018] wcrouse has signed in
+[Tue Oct  9 20:20:13 2018] mgplumme has signed off
+[Tue Oct  9 20:20:21 2018] test1 has signed in
+[Tue Oct  9 20:20:22 2018] test4 has signed in
+[Tue Oct  9 20:21:01 2018] You have joined the server.
+[Tue Oct  9 20:21:01 2018] wcrouse has signed in
+[Tue Oct  9 20:21:05 2018] test3 has signed in
+[Tue Oct  9 20:21:06 2018] test1 has signed in
+[Tue Oct  9 20:21:07 2018] You have joined the server.
+[Tue Oct  9 20:21:07 2018] test1 has signed in
+[Tue Oct  9 20:21:10 2018] <test1> [@wcrouse] hey
+[Tue Oct  9 20:21:10 2018] <test1> hey
+[Tue Oct  9 20:21:20 2018] mgplumme has signed off
+[Tue Oct  9 20:21:20 2018] mgplumme has signed off
+[Tue Oct  9 20:21:24 2018] test3 has signed off
+[Tue Oct  9 20:21:24 2018] test3 has signed off
+[Tue Oct  9 20:22:08 2018] test4 has signed in
+[Tue Oct  9 20:22:08 2018] test4 has signed in
+[Tue Oct  9 20:22:14 2018] mgplumme has signed in
+[Tue Oct  9 20:22:14 2018] mgplumme has signed in
+[Tue Oct  9 20:22:16 2018] mgplumme has signed off
+[Tue Oct  9 20:22:16 2018] mgplumme has signed off
+[Tue Oct  9 20:22:49 2018] wcrouse has signed off
+[Tue Oct  9 20:22:59 2018] You have joined the server.
+[Tue Oct  9 20:22:59 2018] test1 has signed in
+[Tue Oct  9 20:23:10 2018] wcrouse has signed in
+[Tue Oct  9 20:23:10 2018] You have joined the server.
+[Tue Oct  9 20:23:10 2018] wcrouse has signed in
+[Tue Oct  9 20:23:29 2018] test3 has signed in
+[Tue Oct  9 20:23:29 2018] test3 has signed in
+[Tue Oct  9 20:23:30 2018] test1 has signed in
+[Tue Oct  9 20:23:30 2018] test1 has signed in
+[Tue Oct  9 20:24:06 2018] ajkeene has signed in
+[Tue Oct  9 20:24:06 2018] ajkeene has signed in
+[Tue Oct  9 20:24:16 2018] <test1> [@wcrouse] hey whats up
+[Tue Oct  9 20:24:16 2018] <test1> hey whats up
+[Tue Oct  9 20:24:21 2018] <wcrouse> [@test1] nmu
+[Tue Oct  9 20:24:21 2018] <wcrouse> nmu
+[Tue Oct  9 20:24:23 2018] Available commands:
+[Tue Oct  9 20:24:23 2018]   * /quit                   - Stops the client
+[Tue Oct  9 20:24:23 2018]   * /connect <host> [port]  - Connects to a chat server
+[Tue Oct  9 20:24:23 2018]   * /auth <user> <pass>     - Authenticates with the
+[Tue Oct  9 20:24:23 2018]                               server
+[Tue Oct  9 20:24:23 2018]   * /tell <user> <text>     - Sends a message
+[Tue Oct  9 20:24:23 2018]   * /list                   - Lists users currently
+[Tue Oct  9 20:24:23 2018]                               online
+[Tue Oct  9 20:24:23 2018]   * /disconnect             - Disconnects from the
+[Tue Oct  9 20:24:23 2018]                               current server
+[Tue Oct  9 20:24:23 2018]   * /clear                  - Clears the current output
+[Tue Oct  9 20:24:23 2018]   * /pref <key> <value>     - Sets a user preference
+[Tue Oct  9 20:24:23 2018]   * /prefs                  - Lists user preferences
+[Tue Oct  9 20:24:23 2018]   * /help                   - Lists available commands
+[Tue Oct  9 20:24:27 2018] mgplumme has signed in
+[Tue Oct  9 20:24:27 2018] mgplumme has signed in
+[Tue Oct  9 20:24:29 2018] mgplumme has signed off
+[Tue Oct  9 20:24:29 2018] mgplumme has signed off
+[Tue Oct  9 20:24:33 2018] test4 has signed in
+[Tue Oct  9 20:24:33 2018] test4 has signed in
+[Tue Oct  9 20:24:40 2018] wcrouse has signed off
+[Tue Oct  9 20:29:45 2018] You have joined the server.
+[Tue Oct  9 20:29:45 2018] wcrouse has signed in
+[Tue Oct  9 20:30:03 2018] test4 has signed in
+[Tue Oct  9 20:30:10 2018] test1 has signed in
+[Tue Oct  9 20:30:37 2018] test1 has signed in
+[Tue Oct  9 20:30:43 2018] test1 has signed in
+[Tue Oct  9 20:30:43 2018] You have joined the server.
+[Tue Oct  9 20:30:43 2018] test1 has signed in
+[Tue Oct  9 20:30:46 2018] <test1> [@wcrouse] hey
+[Tue Oct  9 20:30:46 2018] <test1> hey
+[Tue Oct  9 20:30:49 2018] test1 has signed off
+[Tue Oct  9 20:30:49 2018] test1 has signed off
+[Tue Oct  9 20:30:56 2018] wcrouse has signed off
